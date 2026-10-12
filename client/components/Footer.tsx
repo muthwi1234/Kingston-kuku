@@ -1,0 +1,102 @@
+import Link from 'next/link';
+import { Phone, Mail, MapPin } from 'lucide-react';
+
+export default function Footer() {
+  return (
+    <footer className="bg-primary text-primary-foreground">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Logo & Tagline */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary">
+                <span className="text-xl">🐓</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold leading-none">KINGSTON</span>
+                <span className="text-sm font-bold leading-none text-secondary">CHICKEN</span>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Fresh Chicken. Quality You Can Taste.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="font-semibold mb-4">Quick Links</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/" className="text-sm hover:text-secondary transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/products" className="text-sm hover:text-secondary transition-colors">
+                  Products
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-sm hover:text-secondary transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-sm hover:text-secondary transition-colors">
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Us */}
+          <div>
+            <h3 className="font-semibold mb-4">Contact Us</h3>
+            <ul className="space-y-2">
+              <li className="flex items-center space-x-2 text-sm">
+                <Phone className="h-4 w-4 text-secondary" />
+                <span>+254 143 188357</span>
+              </li>
+              <li className="flex items-center space-x-2 text-sm">
+                <MapPin className="h-4 w-4 text-secondary" />
+                <span>Nairobi, Kenya</span>
+              </li>
+              <li className="flex items-center space-x-2 text-sm">
+                <Mail className="h-4 w-4 text-secondary" />
+                <span>info@kingstonchicken.co.ke</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Payment Methods */}
+          <div>
+            <h3 className="font-semibold mb-4">Payment Methods</h3>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <div className="h-8 w-12 bg-mpesa rounded flex items-center justify-center text-white text-xs font-bold">
+                  M-PESA
+                </div>
+              </div>
+              <div className="text-sm">
+                <p className="text-muted-foreground">M-PESA Till Number:</p>
+                <p className="font-bold text-secondary">1591045</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="mt-8 pt-8 border-t border-primary-foreground/20">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+            <p className="text-sm text-muted-foreground">
+              © 2026 Kingston Chicken. All rights reserved.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Fresh Chicken | Quality | Great Prices
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}

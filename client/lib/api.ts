@@ -1,0 +1,74 @@
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+export async function fetchAPI(endpoint: string, options?: RequestInit) {
+  const url = `${API_URL}${endpoint}`;
+  
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: 'An error occurred' }));
+    throw new Error(error.error?.message || error.message || 'An error occurred');
+  }
+
+  return response.json();
+}
+
+export const api = {
+  auth: {
+    register: (data: any) => fetchAPI('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    login: (data: any) => fetchAPI('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    logout: () => fetchAPI('/api/auth/logout', { method: 'POST' }),
+    me: () => fetchAPI('/api/auth/me'),
+  },
+  products: {
+    getAll: (params?: { category?: string; search?: string }) => {
+      const searchParams = new URLSearchParams();
+      if (params?.category) searchParams.append('category', params.category);
+      if (params?.search) searchParams.append('search', params.search);
+      return fetchAPI(`/api/products?${searchParams.toString()}`);
+    },
+    getById: (id: string) => fetchAPI(`/api/products/${id}`),
+  },
+  categories: {
+    getAll: () => fetchAPI('/api/categories'),
+  },
+  orders: {
+    create: (data: any) => fetchAPI('/api/orders', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    getMyOrders: () => fetchAPI('/api/orders/my'),
+    getById: (id: string) => fetchAPI(`/api/orders/${id}`),
+  },
+  admin: {
+    getStats: () => fetchAPI('/api/admin/stats'),
+    getSalesReport: (params?: { startDate?: string; endDate?: string }) => {
+      const searchParams = new URLSearchParams();
+      if (params?.startDate) searchParams.append('startDate', params.startDate);
+      if (params?.endDate) searchParams.append('endDate', params.endDate);
+      return fetchAPI(`/api/admin/reports/sales?${searchParams.toString()}`);
+    },
+  },
+  settings: {
+    getAll: () => fetchAPI('/api/settings'),
+  },
+  contact: {
+    sendMessage: (data: any) => fetchAPI('/api/contact', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  },
+};
