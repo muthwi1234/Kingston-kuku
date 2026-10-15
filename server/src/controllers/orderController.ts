@@ -60,6 +60,33 @@ export const getMyOrders = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+export const getAllOrders = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { status, search } = req.query;
+    const filter: any = {};
+
+    if (status && status !== 'ALL') {
+      filter.status = status;
+    }
+
+    if (search) {
+      filter.$or = [
+        { guestName: { $regex: search as string, $options: 'i' } },
+        { guestPhone: { $regex: search as string, $options: 'i' } },
+        { mpesaCode: { $regex: search as string, $options: 'i' } },
+      ];
+    }
+
+    const orders = await Order.find(filter)
+      .populate('userId', 'name email phone')
+      .sort({ createdAt: -1 });
+
+    res.json({ orders });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getOrderById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;

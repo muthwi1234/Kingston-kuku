@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Order from '../models/Order';
 import Product from '../models/Product';
+import User from '../models/User';
 import { AppError } from '../middleware/errorHandler';
 
 export const getStats = async (req: Request, res: Response, next: NextFunction) => {
@@ -57,6 +58,31 @@ export const getSalesReport = async (req: Request, res: Response, next: NextFunc
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=sales-report.csv');
     res.send(csv);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCustomers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const users = await User.find().select('-password').sort({ createdAt: -1 });
+
+    const customersWithOrderCount = await Promise.all(
+      users.map(async (u) => {
+        const orderCount = await Order.countDocuments({ userId: u._id });
+        return {
+          id: u._id,
+          name: u.name,
+          email: u.email,
+          phone: u.phone,
+          role: u.role,
+          createdAt: u.createdAt,
+          orderCount,
+        };
+      })
+    );
+
+    res.json({ customers: customersWithOrderCount });
   } catch (error) {
     next(error);
   }

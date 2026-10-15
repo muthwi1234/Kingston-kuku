@@ -19,19 +19,7 @@ const logger = pino();
 const app = express();
 
 async function connectDatabase() {
-  let mongoUri = process.env.MONGODB_URI;
-
-  if (!mongoUri) {
-    try {
-      const { MongoMemoryServer } = await import('mongodb-memory-server');
-      const memoryServer = await MongoMemoryServer.create();
-      mongoUri = memoryServer.getUri();
-      process.env.MONGODB_URI = mongoUri;
-      logger.info(`Using in-memory MongoDB: ${mongoUri}`);
-    } catch (error) {
-      throw new Error('MONGODB_URI is not set and mongodb-memory-server is unavailable. Add a MongoDB connection string to the server .env file.');
-    }
-  }
+  const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/kingston-chicken';
 
   await mongoose.connect(mongoUri);
   logger.info('Connected to MongoDB');

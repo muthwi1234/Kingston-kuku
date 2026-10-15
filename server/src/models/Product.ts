@@ -24,7 +24,11 @@ const ProductSchema = new Schema<IProduct>(
     stockKg: { type: Number, required: true, default: 0 },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 const Product: Model<IProduct> = mongoose.models.Product || mongoose.model<IProduct>('Product', ProductSchema);

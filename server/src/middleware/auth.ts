@@ -26,9 +26,10 @@ export const authenticate = async (
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || 'your-secret-key'
-    ) as { id: string; email: string; role: string };
+    ) as { id?: string; userId?: string; email?: string; role?: string };
 
-    const user = await User.findById(decoded.id).select('email role');
+    const userId = decoded.id || decoded.userId;
+    const user = await User.findById(userId).select('email role');
 
     if (!user) {
       throw new AppError('User not found', 401);
@@ -39,6 +40,8 @@ export const authenticate = async (
       email: user.email,
       role: user.role,
     };
+    (req as any).userId = user._id.toString();
+    (req as any).userRole = user.role;
     next();
   } catch (error) {
     next(new AppError('Not authenticated', 401));
