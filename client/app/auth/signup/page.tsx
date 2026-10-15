@@ -10,9 +10,11 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
+import { useAuthStore } from '@/lib/store';
 
 export default function SignupPage() {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -41,14 +43,17 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      await api.auth.register({
+      const res = await api.auth.register({
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
       });
-      toast.success('Account created successfully! Please login.');
-      router.push('/auth/login');
+      if (res.user) {
+        setUser(res.user);
+      }
+      toast.success('Account created successfully!');
+      router.push('/');
     } catch (error: any) {
       toast.error(error.message || 'Failed to create account');
     } finally {

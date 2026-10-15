@@ -10,9 +10,11 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
+import { useAuthStore } from '@/lib/store';
 
 export default function LoginPage() {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -28,12 +30,19 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      await api.auth.login({
+      const res = await api.auth.login({
         email: formData.email,
         password: formData.password,
       });
+      if (res.user) {
+        setUser(res.user);
+      }
       toast.success('Login successful!');
-      router.push('/');
+      if (res.user?.role === 'ADMIN') {
+        router.push('/admin');
+      } else {
+        router.push('/');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Login failed');
     } finally {

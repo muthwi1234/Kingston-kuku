@@ -69,3 +69,57 @@ export const useCartStore = create<CartStore>()(
     }
   )
 );
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: 'CUSTOMER' | 'ADMIN';
+}
+
+interface AuthStore {
+  user: User | null;
+  isLoading: boolean;
+  setUser: (user: User | null) => void;
+  checkAuth: () => Promise<void>;
+  logout: () => Promise<void>;
+}
+
+export const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
+      user: null,
+      isLoading: true,
+      setUser: (user) => set({ user, isLoading: false }),
+      checkAuth: async () => {
+        try {
+          const { api } = await import('./api');
+          const res = await api.auth.me();
+          if (res?.user) {
+            set({ user: res.user, isLoading: false });
+          } else {
+            set({ user: null, isLoading: false });
+          }
+        } catch {
+          set({ user: null, isLoading: false });
+        }
+      },
+      logout: async () => {
+        try {
+          const { api } = await import('./api');
+          await api.auth.logout();
+        } catch {
+          // ignore error on logout
+        } finally {
+          set({ user: null, isLoading: false });
+        }
+      },
+    }),
+    {
+      name: 'kingston-auth',
+      partialize: (state) => ({ user: state.user }),
+    }
+  )
+);
+

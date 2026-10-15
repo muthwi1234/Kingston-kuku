@@ -41,6 +41,17 @@ export const api = {
       return fetchAPI(`/api/products?${searchParams.toString()}`);
     },
     getById: (id: string) => fetchAPI(`/api/products/${id}`),
+    create: (data: any) => fetchAPI('/api/products', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    update: (id: string, data: any) => fetchAPI(`/api/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+    delete: (id: string) => fetchAPI(`/api/products/${id}`, {
+      method: 'DELETE',
+    }),
   },
   categories: {
     getAll: () => fetchAPI('/api/categories'),
@@ -50,8 +61,22 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+    getAll: (params?: { status?: string; search?: string }) => {
+      const searchParams = new URLSearchParams();
+      if (params?.status) searchParams.append('status', params.status);
+      if (params?.search) searchParams.append('search', params.search);
+      return fetchAPI(`/api/orders?${searchParams.toString()}`);
+    },
     getMyOrders: () => fetchAPI('/api/orders/my'),
     getById: (id: string) => fetchAPI(`/api/orders/${id}`),
+    updateStatus: (id: string, status: string) => fetchAPI(`/api/orders/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    }),
+    verifyPayment: (id: string, mpesaCode?: string) => fetchAPI(`/api/orders/${id}/verify-payment`, {
+      method: 'PATCH',
+      body: JSON.stringify({ mpesaCode }),
+    }),
   },
   admin: {
     getStats: () => fetchAPI('/api/admin/stats'),
@@ -61,9 +86,14 @@ export const api = {
       if (params?.endDate) searchParams.append('endDate', params.endDate);
       return fetchAPI(`/api/admin/reports/sales?${searchParams.toString()}`);
     },
+    getCustomers: () => fetchAPI('/api/admin/customers'),
   },
   settings: {
     getAll: () => fetchAPI('/api/settings'),
+    update: (key: string, value: string) => fetchAPI(`/api/settings/${key}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ value }),
+    }),
   },
   contact: {
     sendMessage: (data: any) => fetchAPI('/api/contact', {

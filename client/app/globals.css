@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 251 250 246;
-    --foreground: 26 26 26;
+    --background: 255 255 255;
+    --foreground: 15 23 42;
     --card: 255 255 255;
-    --card-foreground: 26 26 26;
+    --card-foreground: 15 23 42;
     --popover: 255 255 255;
-    --popover-foreground: 26 26 26;
+    --popover-foreground: 15 23 42;
     --primary: 11 61 46;
     --primary-foreground: 255 255 255;
     --secondary: 245 180 0;
     --secondary-foreground: 26 26 26;
-    --muted: 107 114 128;
-    --muted-foreground: 255 255 255;
+    --muted: 100 116 139;
+    --muted-foreground: 148 163 184;
     --accent: 245 180 0;
     --accent-foreground: 26 26 26;
     --destructive: 220 38 38;
     --destructive-foreground: 255 255 255;
-    --border: 231 229 223;
-    --input: 231 229 223;
+    --border: 226 232 240;
+    --input: 226 232 240;
     --ring: 11 61 46;
     --radius: 0.5rem;
   }
@@ -45,7 +45,7 @@
     --destructive-foreground: 255 255 255;
     --border: 51 65 85;
     --input: 51 65 85;
-    --ring: 245 180 0;
+    --ring: 11 61 46;
   }
 }
 
@@ -56,6 +56,25 @@
   body {
     @apply bg-page text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Prevent browser yellow autofill on all inputs, textareas, and selects */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  textarea:-webkit-autofill:active,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus,
+  select:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #0f172a !important;
+    box-shadow: 0 0 0 1000px #ffffff inset !important;
+    transition: background-color 5000s ease-in-out 0s;
   }
 }
 

@@ -1,16 +1,39 @@
 'use client';
 
 import Link from 'next/link';
-import { Phone, ShoppingCart, Menu, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Phone, ShoppingCart, Menu, X, User as UserIcon, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useCartStore } from '@/lib/store';
-import { useState } from 'react';
+import { useCartStore, useAuthStore } from '@/lib/store';
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 export default function Header() {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  
   const cartItems = useCartStore((state) => state.items);
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantityKg, 0);
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+
+  useEffect(() => {
+    setMounted(true);
+    checkAuth();
+  }, [checkAuth]);
+
+  const totalItems = mounted
+    ? cartItems.reduce((sum, item) => sum + (Number(item.quantityKg) || 0), 0)
+    : 0;
+
+  const handleLogout = async () => {
+    await logout();
+    toast.success('Logged out successfully');
+    setMobileMenuOpen(false);
+    router.push('/');
+  };
 
   const navLinks = [
     { href: '/', label: 'Home' },
@@ -69,16 +92,45 @@ export default function Header() {
             </Link>
 
             <div className="hidden md:flex items-center space-x-2">
-              <Link href="/auth/login">
-                <Button variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button className="bg-secondary text-primary-foreground hover:bg-secondary/80">
-                  Sign Up
-                </Button>
-              </Link>
+              {mounted && user ? (
+                <>
+                  {user.role === 'ADMIN' && (
+                    <Link href="/admin">
+                      <Button variant="outline" size="sm" className="border-secondary text-secondary hover:bg-secondary/10 flex items-center gap-1.5">
+                        <Shield className="h-3.5 w-3.5" />
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
+                  <Link href="/profile">
+                    <Button variant="outline" size="sm" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 flex items-center gap-1.5">
+                      <UserIcon className="h-3.5 w-3.5" />
+                      {user.name.split(' ')[0]}
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleLogout}
+                    className="text-primary-foreground hover:bg-primary-hover"
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/login">
+                    <Button variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/auth/signup">
+                    <Button className="bg-secondary text-primary-foreground hover:bg-secondary/80">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu */}
@@ -108,22 +160,57 @@ export default function Header() {
                     <span>+254 143 188557</span>
                   </a>
                   <div className="border-t border-primary-foreground/20 pt-4 space-y-3">
-                    <Link
-                      href="/auth/login"
-                      className="block text-lg font-medium hover:text-secondary transition-colors"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      href="/auth/signup"
-                      className="block"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button className="w-full bg-secondary text-primary-foreground hover:bg-secondary/80">
-                        Sign Up
-                      </Button>
-                    </Link>
+                    {mounted && user ? (
+                      <>
+                        <div className="pb-2">
+                          <p className="text-xs text-muted-foreground uppercase font-semibold">Signed in as</p>
+                          <p className="text-base font-bold text-primary">{user.name}</p>
+                          <p className="text-xs text-muted-foreground">{user.email}</p>
+                        </div>
+                        {user.role === 'ADMIN' && (
+                          <Link
+                            href="/admin"
+                            className="block text-base font-medium text-secondary hover:underline"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Admin Dashboard →
+                          </Link>
+                        )}
+                        <Link
+                          href="/profile"
+                          className="block text-base font-medium hover:text-secondary transition-colors"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          My Profile & Orders
+                        </Link>
+                        <Button
+                          variant="outline"
+                          onClick={handleLogout}
+                          className="w-full justify-center"
+                        >
+                          Logout
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          href="/auth/login"
+                          className="block text-lg font-medium hover:text-secondary transition-colors"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Login
+                        </Link>
+                        <Link
+                          href="/auth/signup"
+                          className="block"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Button className="w-full bg-secondary text-primary-foreground hover:bg-secondary/80">
+                            Sign Up
+                          </Button>
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </nav>
               </SheetContent>

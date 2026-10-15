@@ -64,11 +64,13 @@ function ProductsContent() {
   };
 
   const handleAddToCart = (product: any) => {
+    const pId = product.id || product._id;
+    if (!pId) return;
     addItem({
-      productId: product.id,
+      productId: pId,
       name: product.name,
       pricePerKg: product.pricePerKg,
-      imageUrl: product.imageUrl,
+      imageUrl: product.imageUrl || '',
       quantityKg: 1,
     });
     toast.success(`${product.name} added to cart`);
@@ -154,7 +156,7 @@ function ProductsContent() {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {products.map((product) => (
-                    <Card key={product.id} className="overflow-hidden">
+                    <Card key={product.id || product._id} className="overflow-hidden">
                       <div className="aspect-square bg-muted relative">
                         <div className="absolute inset-0 flex items-center justify-center text-5xl sm:text-6xl">
                           🍗

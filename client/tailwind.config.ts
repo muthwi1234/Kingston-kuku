@@ -49,7 +49,7 @@ const config: Config = {
           foreground: '#1A1A1A',
         },
         page: {
-          DEFAULT: '#FBFAF6',
+          DEFAULT: '#F8FAFC',
         },
         mint: {
           DEFAULT: '#E6F4EA',

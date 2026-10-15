@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -6,8 +9,14 @@ import { Shield, DollarSign, Truck, CreditCard } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { formatCurrency } from '@/lib/utils';
+import { useCartStore } from '@/lib/store';
+import { api } from '@/lib/api';
+import { toast } from 'sonner';
 
 export default function HomePage() {
+  const addItem = useCartStore((state) => state.addItem);
+  const [liveProducts, setLiveProducts] = useState<any[]>([]);
+
   const features = [
     {
       icon: Shield,
@@ -31,16 +40,43 @@ export default function HomePage() {
     },
   ];
 
-  const products = [
-    { id: '1', name: 'Chicken Legs', price: 500, slug: 'chicken-legs' },
-    { id: '2', name: 'Boneless', price: 600, slug: 'boneless' },
-    { id: '3', name: 'Wings', price: 500, slug: 'wings' },
-    { id: '4', name: 'Gizzard', price: 500, slug: 'gizzard' },
-    { id: '5', name: 'Drumsticks', price: 580, slug: 'drumsticks' },
-    { id: '6', name: 'Chicken Thighs', price: 480, slug: 'chicken-thighs' },
-    { id: '7', name: 'Kuku Katakata', price: 240, slug: 'kuku-katakata' },
-    { id: '8', name: 'Katakata Without Skin', price: 280, slug: 'katakata-without-skin' },
+  const defaultProducts = [
+    { id: '1', name: 'Chicken Legs', pricePerKg: 500, slug: 'chicken-legs' },
+    { id: '2', name: 'Boneless', pricePerKg: 600, slug: 'boneless' },
+    { id: '3', name: 'Wings', pricePerKg: 500, slug: 'wings' },
+    { id: '4', name: 'Gizzard', pricePerKg: 500, slug: 'gizzard' },
+    { id: '5', name: 'Drumsticks', pricePerKg: 580, slug: 'drumsticks' },
+    { id: '6', name: 'Chicken Thighs', pricePerKg: 480, slug: 'chicken-thighs' },
+    { id: '7', name: 'Kuku Katakata', pricePerKg: 240, slug: 'kuku-katakata' },
+    { id: '8', name: 'Katakata Without Skin', pricePerKg: 280, slug: 'katakata-without-skin' },
   ];
+
+  useEffect(() => {
+    api.products
+      .getAll()
+      .then((res) => {
+        if (res.products && res.products.length > 0) {
+          setLiveProducts(res.products.slice(0, 8));
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch home products:', err);
+      });
+  }, []);
+
+  const displayProducts = liveProducts.length > 0 ? liveProducts : defaultProducts;
+
+  const handleAddToCart = (product: any) => {
+    const pId = product.id || product._id || product.slug;
+    addItem({
+      productId: pId,
+      name: product.name,
+      pricePerKg: product.pricePerKg || product.price,
+      imageUrl: product.imageUrl || '',
+      quantityKg: 1,
+    });
+    toast.success(`${product.name} added to cart`);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -105,8 +141,8 @@ export default function HomePage() {
             <p className="text-sm md:text-base text-muted-foreground">Fresh chicken cuts, great prices.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {products.map((product) => (
-              <Card key={product.id} className="overflow-hidden">
+            {displayProducts.map((product) => (
+              <Card key={product.id || product._id || product.slug} className="overflow-hidden">
                 <div className="aspect-square bg-muted relative">
                   <div className="absolute inset-0 flex items-center justify-center text-4xl sm:text-5xl md:text-6xl">
                     🍗
@@ -115,9 +151,12 @@ export default function HomePage() {
                 <CardContent className="p-3 md:p-4">
                   <h3 className="font-semibold mb-2 text-sm md:text-base">{product.name}</h3>
                   <p className="text-base md:text-lg font-bold text-primary mb-3 md:mb-4">
-                    {formatCurrency(product.price)} / kg
+                    {formatCurrency(product.pricePerKg || product.price)} / kg
                   </p>
-                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-sm md:text-base">
+                  <Button
+                    onClick={() => handleAddToCart(product)}
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-sm md:text-base"
+                  >
                     Add to Cart
                   </Button>
                 </CardContent>
