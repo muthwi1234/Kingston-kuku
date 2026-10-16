@@ -140,22 +140,30 @@ export default function HomePage() {
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">Our Products</h2>
             <p className="text-sm md:text-base text-muted-foreground">Fresh chicken cuts, great prices.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {displayProducts.map((product) => (
               <Card key={product.id || product._id || product.slug} className="overflow-hidden">
                 <div className="aspect-square bg-muted relative">
-                  <div className="absolute inset-0 flex items-center justify-center text-4xl sm:text-5xl md:text-6xl">
-                    🍗
-                  </div>
+                  {product.imageUrl ? (
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+                      🍗
+                    </div>
+                  )}
                 </div>
-                <CardContent className="p-3 md:p-4">
-                  <h3 className="font-semibold mb-2 text-sm md:text-base">{product.name}</h3>
-                  <p className="text-base md:text-lg font-bold text-primary mb-3 md:mb-4">
+                <CardContent className="p-2 md:p-3 lg:p-4">
+                  <h3 className="font-semibold mb-1 md:mb-2 text-xs sm:text-sm md:text-base">{product.name}</h3>
+                  <p className="text-sm md:text-base lg:text-lg font-bold text-primary mb-2 md:mb-3 lg:mb-4">
                     {formatCurrency(product.pricePerKg || product.price)} / kg
                   </p>
                   <Button
                     onClick={() => handleAddToCart(product)}
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-sm md:text-base"
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-xs sm:text-sm md:text-base"
                   >
                     Add to Cart
                   </Button>

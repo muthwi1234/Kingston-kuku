@@ -44,6 +44,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     checkAuth();
   }, [checkAuth]);
 
+  useEffect(() => {
+    if (mounted && (!user || user.role !== 'ADMIN')) {
+      router.push('/auth/login');
+    }
+  }, [mounted, user, router]);
+
   const handleLogout = async () => {
     await logout();
     toast.success('Logged out successfully');

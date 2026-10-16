@@ -20,10 +20,10 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [statsData, setStatsData] = useState<any>({
-    totalSales: 36750,
-    totalOrders: 23,
-    pendingOrders: 4,
-    lowStockProducts: 2,
+    totalSales: 0,
+    totalOrders: 0,
+    pendingOrders: 0,
+    lowStockProducts: 0,
   });
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
@@ -57,38 +57,27 @@ export default function AdminDashboard() {
     {
       label: 'Total Sales',
       value: formatCurrency(statsData.totalSales || 0),
-      change: '+12.5%',
       tone: 'emerald',
       icon: CircleDollarSign,
     },
     {
       label: 'Total Orders',
       value: String(statsData.totalOrders ?? 0),
-      change: '+8.2%',
       tone: 'sky',
       icon: ShoppingCart,
     },
     {
       label: 'Pending Orders',
       value: String(statsData.pendingOrders ?? 0),
-      change: statsData.pendingOrders > 0 ? 'Needs action' : 'All clear',
       tone: statsData.pendingOrders > 0 ? 'amber' : 'emerald',
       icon: WalletCards,
     },
     {
       label: 'Low Stock Items',
       value: String(statsData.lowStockProducts ?? 0),
-      change: statsData.lowStockProducts > 0 ? 'Restock needed' : 'Healthy',
       tone: statsData.lowStockProducts > 0 ? 'rose' : 'emerald',
       icon: PackageCheck,
     },
-  ];
-
-  const topProducts = [
-    { name: 'Chicken Legs', sold: '4.8k kg', percent: '42%' },
-    { name: 'Wings', sold: '3.2k kg', percent: '28%' },
-    { name: 'Gizzard', sold: '2.6k kg', percent: '18%' },
-    { name: 'Boneless Breast', sold: '1.4k kg', percent: '12%' },
   ];
 
   const quickActions = [
@@ -129,7 +118,7 @@ export default function AdminDashboard() {
 
       {/* Stats Grid */}
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map(({ label, value, change, tone, icon: Icon }) => (
+        {stats.map(({ label, value, tone, icon: Icon }) => (
           <Card key={label} className="border border-slate-200/80 bg-white p-5 shadow-sm rounded-2xl">
             <div className="flex items-start justify-between">
               <div>
@@ -150,28 +139,12 @@ export default function AdminDashboard() {
                 <Icon className="h-5 w-5" />
               </div>
             </div>
-            <div className="mt-4 flex items-center justify-between text-xs sm:text-sm">
-              <span
-                className={`font-semibold ${
-                  tone === 'emerald'
-                    ? 'text-emerald-600'
-                    : tone === 'sky'
-                      ? 'text-sky-600'
-                      : tone === 'amber'
-                        ? 'text-amber-600'
-                        : 'text-rose-600'
-                }`}
-              >
-                {change}
-              </span>
-              <span className="text-slate-400">status</span>
-            </div>
           </Card>
         ))}
       </section>
 
       {/* Main Grid: Recent Orders & Quick Actions */}
-      <section className="grid gap-6 xl:grid-cols-[2fr_1fr]">
+      <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         <Card className="border border-slate-200/80 bg-white p-5 shadow-sm rounded-2xl">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900">Recent Orders</h2>
@@ -239,40 +212,8 @@ export default function AdminDashboard() {
           </div>
         </Card>
 
-        {/* Right Column: Best Sellers & Quick Actions */}
+        {/* Right Column: Quick Actions */}
         <div className="space-y-6">
-          <Card className="border border-slate-200/80 bg-white p-5 shadow-sm rounded-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900">Best Sellers</h2>
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Popular</span>
-            </div>
-
-            <div className="space-y-3.5">
-              {topProducts.map((product, index) => (
-                <div key={product.name}>
-                  <div className="mb-1.5 flex items-center justify-between text-sm">
-                    <span className="font-semibold text-slate-700">{product.name}</span>
-                    <span className="text-xs font-medium text-slate-500">{product.sold}</span>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${
-                        index === 0
-                          ? 'bg-primary'
-                          : index === 1
-                            ? 'bg-secondary'
-                            : index === 2
-                              ? 'bg-emerald-500'
-                              : 'bg-amber-500'
-                      }`}
-                      style={{ width: product.percent }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
           <Card className="border border-slate-200/80 bg-white p-5 shadow-sm rounded-2xl">
             <div className="mb-4">
               <h2 className="text-lg font-bold text-slate-900">Quick Actions</h2>

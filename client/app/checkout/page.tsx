@@ -77,8 +77,8 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (formData.paymentMethod === 'MPESA' && !/^[A-Z0-9]{10}$/.test(formData.mpesaCode)) {
-      toast.error('M-Pesa code must be 10 characters (uppercase letters and numbers)');
+    if (formData.paymentMethod === 'MPESA' && formData.mpesaCode.length < 5) {
+      toast.error('M-Pesa code must be at least 5 characters');
       return;
     }
 
@@ -87,11 +87,13 @@ export default function CheckoutPage() {
       const orderData = {
         items: items.map((item) => ({
           productId: item.productId,
+          productName: item.name,
+          pricePerKg: item.pricePerKg,
           quantityKg: item.quantityKg,
         })),
         guestName: formData.fullName,
         guestPhone: formatPhone(formData.phone),
-        deliveryType: formData.deliveryType,
+        deliveryType: formData.deliveryType === 'pickup' ? 'PICKUP' : 'DELIVERY',
         address: formData.deliveryType === 'delivery' ? formData.address : '',
         notes: formData.notes,
         paymentMethod: formData.paymentMethod,
@@ -267,10 +269,10 @@ export default function CheckoutPage() {
                               <Input
                                 id="mpesaCode"
                                 name="mpesaCode"
-                                placeholder="QP12345678"
+                                placeholder="e.g., QP12345678"
                                 value={formData.mpesaCode}
                                 onChange={handleInputChange}
-                                className="uppercase text-lg font-semibold"
+                                className="text-lg font-semibold"
                                 required
                               />
                             </div>

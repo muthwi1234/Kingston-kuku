@@ -87,105 +87,83 @@ function ProductsContent() {
             <p className="text-muted-foreground">Fresh chicken cuts, great prices.</p>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-            {/* Sidebar */}
-            <aside className="lg:w-64 flex-shrink-0">
-              <div className="sticky top-20 lg:top-24">
-                <h2 className="font-semibold mb-4 text-lg">Categories</h2>
-                <ul className="space-y-2">
-                  <li>
-                    <button
-                      onClick={() => handleCategoryChange('all')}
-                      className={`w-full text-left px-3 py-2 rounded-md transition-colors text-sm sm:text-base ${
-                        selectedCategory === 'all'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'hover:bg-muted'
-                      }`}
-                    >
-                      All Products
-                    </button>
-                  </li>
-                  {categories.map((category) => (
-                    <li key={category.id}>
-                      <button
-                        onClick={() => handleCategoryChange(category.slug)}
-                        className={`w-full text-left px-3 py-2 rounded-md transition-colors text-sm sm:text-base ${
-                          selectedCategory === category.slug
-                            ? 'bg-primary text-primary-foreground'
-                            : 'hover:bg-muted'
-                        }`}
-                      >
-                        {category.name}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </aside>
-
-            {/* Products Grid */}
-            <div className="flex-1">
-              {/* Search */}
-              <form onSubmit={handleSearch} className="mb-6">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </form>
-
-              {/* Products */}
-              {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {[...Array(6)].map((_, i) => (
-                    <Card key={i} className="overflow-hidden">
-                      <div className="aspect-square bg-muted animate-pulse" />
-                      <CardContent className="p-4">
-                        <div className="h-4 bg-muted animate-pulse mb-2" />
-                        <div className="h-6 bg-muted animate-pulse mb-4" />
-                        <div className="h-10 bg-muted animate-pulse" />
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {products.map((product) => (
-                    <Card key={product.id || product._id} className="overflow-hidden">
-                      <div className="aspect-square bg-muted relative">
-                        <div className="absolute inset-0 flex items-center justify-center text-5xl sm:text-6xl">
-                          🍗
-                        </div>
-                      </div>
-                      <CardContent className="p-4">
-                        <h3 className="font-semibold mb-2 text-sm sm:text-base">{product.name}</h3>
-                        <p className="text-base sm:text-lg font-bold text-primary mb-4">
-                          {formatCurrency(product.pricePerKg)} / kg
-                        </p>
-                        <Button
-                          onClick={() => handleAddToCart(product)}
-                          className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-sm sm:text-base"
-                        >
-                          Add to Cart
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-
-              {products.length === 0 && !loading && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">No products found.</p>
-                </div>
-              )}
+          {/* Search and Filter Bar */}
+          <div className="mb-6 flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
             </div>
+            <select
+              value={selectedCategory}
+              onChange={(e) => handleCategoryChange(e.target.value)}
+              className="px-4 py-2 border rounded-md bg-white"
+            >
+              <option value="all">All Categories</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.slug}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
           </div>
+
+          {/* Products Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {loading ? (
+              [...Array(10)].map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <div className="aspect-square bg-muted animate-pulse" />
+                  <CardContent className="p-4">
+                    <div className="h-4 bg-muted animate-pulse mb-2" />
+                    <div className="h-6 bg-muted animate-pulse mb-4" />
+                    <div className="h-10 bg-muted animate-pulse" />
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              products.map((product) => (
+                <Card key={product.id || product._id} className="overflow-hidden">
+                  <div className="aspect-square bg-muted relative">
+                    {product.imageUrl ? (
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-5xl sm:text-6xl">
+                        🍗
+                      </div>
+                    )}
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold mb-2 text-sm sm:text-base">{product.name}</h3>
+                    <p className="text-base sm:text-lg font-bold text-primary mb-4">
+                      {formatCurrency(product.pricePerKg)} / kg
+                    </p>
+                    <Button
+                      onClick={() => handleAddToCart(product)}
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-sm sm:text-base"
+                    >
+                      Add to Cart
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+
+          {products.length === 0 && !loading && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No products found.</p>
+            </div>
+          )}
         </div>
       </main>
 

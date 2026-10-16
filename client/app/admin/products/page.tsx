@@ -51,8 +51,10 @@ export default function AdminProductsPage() {
     pricePerKg: '',
     stockKg: '',
     categoryId: '',
+    imageUrl: '',
     isActive: true,
   });
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -83,8 +85,10 @@ export default function AdminProductsPage() {
       pricePerKg: '',
       stockKg: '50',
       categoryId: categories[0]?._id || categories[0]?.id || '',
+      imageUrl: '',
       isActive: true,
     });
+    setImagePreview(null);
     setModalOpen(true);
   };
 
@@ -97,9 +101,25 @@ export default function AdminProductsPage() {
       pricePerKg: String(product.pricePerKg),
       stockKg: String(product.stockKg || 0),
       categoryId: product.categoryId?._id || product.categoryId?.id || product.categoryId || '',
+      imageUrl: product.imageUrl || '',
       isActive: product.isActive ?? true,
     });
+    setImagePreview(product.imageUrl || null);
     setModalOpen(true);
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // In a real app, you'd upload to a service like Cloudinary, AWS S3, etc.
+      // For now, we'll use a local preview and store the file as base64
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, imageUrl: reader.result as string });
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleNameChange = (name: string) => {
@@ -130,6 +150,7 @@ export default function AdminProductsPage() {
         pricePerKg: Number(formData.pricePerKg),
         stockKg: Number(formData.stockKg),
         categoryId: formData.categoryId,
+        imageUrl: formData.imageUrl,
         isActive: formData.isActive,
       };
 
@@ -265,8 +286,16 @@ export default function AdminProductsPage() {
                   return (
                     <tr key={pId} className="hover:bg-slate-50/70 transition">
                       <td className="py-3 font-medium text-slate-900 flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-xl shrink-0">
-                          🍗
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 overflow-hidden shrink-0">
+                          {product.imageUrl ? (
+                            <img
+                              src={product.imageUrl}
+                              alt={product.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-xl">🍗</span>
+                          )}
                         </div>
                         <div>
                           <p className="font-semibold text-slate-900">{product.name}</p>
@@ -411,6 +440,40 @@ export default function AdminProductsPage() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Fresh tender cuts..."
               />
+            </div>
+
+            <div>
+              <Label htmlFor="pImage">Product Image</Label>
+              <div className="mt-2">
+                <Input
+                  id="pImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="mb-2"
+                />
+                {imagePreview && (
+                  <div className="relative w-full h-40 border rounded-lg overflow-hidden bg-slate-50">
+                    <img
+                      src={imagePreview}
+                      alt="Product preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={() => {
+                        setFormData({ ...formData, imageUrl: '' });
+                        setImagePreview(null);
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
 
             <DialogFooter className="pt-2">
