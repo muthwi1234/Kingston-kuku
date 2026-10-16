@@ -65,24 +65,11 @@ export const getSalesReport = async (req: Request, res: Response, next: NextFunc
 
 export const getCustomers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await User.find().select('-password').sort({ createdAt: -1 });
+    const customers = await User.find({ role: 'CUSTOMER' })
+      .select('-password')
+      .sort({ createdAt: -1 });
 
-    const customersWithOrderCount = await Promise.all(
-      users.map(async (u) => {
-        const orderCount = await Order.countDocuments({ userId: u._id });
-        return {
-          id: u._id,
-          name: u.name,
-          email: u.email,
-          phone: u.phone,
-          role: u.role,
-          createdAt: u.createdAt,
-          orderCount,
-        };
-      })
-    );
-
-    res.json({ customers: customersWithOrderCount });
+    res.json({ customers });
   } catch (error) {
     next(error);
   }
