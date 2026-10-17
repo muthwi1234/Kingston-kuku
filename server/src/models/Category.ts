@@ -14,7 +14,11 @@ const CategorySchema = new Schema<ICategory>(
     slug: { type: String, required: true, unique: true },
     description: { type: String },
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 const Category: Model<ICategory> = mongoose.models.Category || mongoose.model<ICategory>('Category', CategorySchema);

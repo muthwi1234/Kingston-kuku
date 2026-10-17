@@ -35,13 +35,15 @@ export const authenticate = async (
       throw new AppError('User not found', 401);
     }
 
+    const normalizedRole = user.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'CUSTOMER';
+
     req.user = {
       id: user._id.toString(),
       email: user.email,
-      role: user.role,
+      role: normalizedRole,
     };
     (req as any).userId = user._id.toString();
-    (req as any).userRole = user.role;
+    (req as any).userRole = normalizedRole;
     next();
   } catch (error) {
     next(new AppError('Not authenticated', 401));
@@ -53,7 +55,8 @@ export const requireAdmin = (
   res: Response,
   next: NextFunction
 ) => {
-  if (req.user?.role !== 'ADMIN') {
+  const role = req.user?.role?.toUpperCase();
+  if (role !== 'ADMIN') {
     return next(new AppError('Admin access required', 403));
   }
   next();

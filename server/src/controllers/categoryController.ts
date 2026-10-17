@@ -4,7 +4,14 @@ import { AppError } from '../middleware/errorHandler';
 
 export const getAllCategories = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const categories = await Category.find().sort({ name: 1 });
+    let categories = await Category.find().sort({ name: 1 });
+    if (!categories || categories.length === 0) {
+      categories = await Category.create([
+        { name: 'Chicken Cuts & Parts', slug: 'chicken-parts', description: 'Fresh chicken cuts, wings, thighs, and drumsticks' },
+        { name: 'Whole Chicken', slug: 'whole-chicken', description: 'Fresh whole and dressed chickens' },
+        { name: 'Specialty Cuts & Offal', slug: 'specialty', description: 'Gizzards, livers, and specialty chicken pieces' },
+      ]);
+    }
     res.json({ categories });
   } catch (error) {
     next(error);

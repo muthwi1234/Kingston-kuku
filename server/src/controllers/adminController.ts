@@ -65,11 +65,51 @@ export const getSalesReport = async (req: Request, res: Response, next: NextFunc
 
 export const getCustomers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const customers = await User.find({ role: 'CUSTOMER' })
+    const users = await User.find({})
       .select('-password')
       .sort({ createdAt: -1 });
 
+    const customers = users.map((user) => {
+      const u = user.toObject ? user.toObject() : user;
+      return {
+        ...u,
+        role: u.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'CUSTOMER',
+      };
+    });
+
     res.json({ customers });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUserRole = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    const normalizedRole = role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'CUSTOMER';
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { role: normalizedRole },
+      { new: true }
+    ).select('-password');
+
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    res.json({
+      message: 'User role updated successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: normalizedRole,
+      },
+    });
   } catch (error) {
     next(error);
   }

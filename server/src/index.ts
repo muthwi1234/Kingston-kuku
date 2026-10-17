@@ -14,6 +14,7 @@ import orderRoutes from './routes/orders';
 import adminRoutes from './routes/admin';
 import settingsRoutes from './routes/settings';
 import contactRoutes from './routes/contact';
+import uploadRoutes from './routes/upload';
 
 const logger = pino();
 const app = express();
@@ -34,7 +35,7 @@ async function startServer() {
     credentials: true,
   }));
   app.use(cookieParser());
-  app.use(express.json());
+  app.use(express.json({ limit: '10mb' }));
   app.use(rateLimiter);
 
   // Routes
@@ -45,6 +46,7 @@ async function startServer() {
   app.use('/api/admin', adminRoutes);
   app.use('/api/settings', settingsRoutes);
   app.use('/api/contact', contactRoutes);
+  app.use('/api/upload', uploadRoutes);
 
   // Health check
   app.get('/health', (req, res) => {

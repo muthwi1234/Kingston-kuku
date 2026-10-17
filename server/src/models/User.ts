@@ -21,9 +21,20 @@ const UserSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     phone: { type: String, required: true },
-    role: { type: String, enum: UserRole, default: UserRole.CUSTOMER },
+    role: {
+      type: String,
+      default: UserRole.CUSTOMER,
+      set: (val: string) => {
+        if (!val) return UserRole.CUSTOMER;
+        return val.toUpperCase() === 'ADMIN' ? UserRole.ADMIN : UserRole.CUSTOMER;
+      },
+      get: (val: string) => {
+        if (!val) return UserRole.CUSTOMER;
+        return val.toUpperCase() === 'ADMIN' ? UserRole.ADMIN : UserRole.CUSTOMER;
+      },
+    },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { getters: true }, toObject: { getters: true } }
 );
 
 const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);

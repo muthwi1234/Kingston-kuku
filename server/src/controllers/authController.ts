@@ -64,8 +64,10 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       throw new AppError('Invalid credentials', 401);
     }
 
+    const normalizedRole = user.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'CUSTOMER';
+
     const token = jwt.sign(
-      { userId: user._id, id: user._id, role: user.role },
+      { userId: user._id, id: user._id, role: normalizedRole },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '7d' }
     );
@@ -83,7 +85,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         name: user.name,
         email: user.email,
         phone: user.phone,
-        role: user.role,
+        role: normalizedRole,
       },
     });
   } catch (error) {
@@ -110,13 +112,15 @@ export const getMe = async (req: Request, res: Response, next: NextFunction) => 
       throw new AppError('User not found', 404);
     }
 
+    const normalizedRole = user.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'CUSTOMER';
+
     res.json({ 
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
-        role: user.role,
+        role: normalizedRole,
       }
     });
   } catch (error) {

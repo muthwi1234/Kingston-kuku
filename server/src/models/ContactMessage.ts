@@ -13,7 +13,7 @@ export interface IContactMessage extends Document {
 const ContactMessageSchema = new Schema<IContactMessage>(
   {
     name: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: false, default: '' },
     phone: { type: String },
     message: { type: String, required: true },
     isRead: { type: Boolean, default: false },
