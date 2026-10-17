@@ -48,8 +48,26 @@ export default function AdminCustomersPage() {
   });
 
   const totalUsers = customers.length;
-  const adminUsers = customers.filter((c) => c.role === 'ADMIN').length;
+  const adminUsers = customers.filter((c) => c.role?.toUpperCase() === 'ADMIN').length;
   const regularUsers = totalUsers - adminUsers;
+
+  const handleToggleRole = async (customer: any) => {
+    const currentIsAdmin = customer.role?.toUpperCase() === 'ADMIN';
+    const newRole = currentIsAdmin ? 'CUSTOMER' : 'ADMIN';
+    const confirmMessage = currentIsAdmin
+      ? `Change ${customer.name}'s role to Customer?`
+      : `Promote ${customer.name} to Administrator?`;
+
+    if (!window.confirm(confirmMessage)) return;
+
+    try {
+      await api.admin.updateUserRole(customer.id || customer._id, newRole);
+      toast.success(`${customer.name} is now ${newRole === 'ADMIN' ? 'an Administrator' : 'a Customer'}`);
+      fetchCustomers();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update user role');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -110,61 +128,79 @@ export default function AdminCustomersPage() {
                 <th className="pb-3 font-semibold">Role</th>
                 <th className="pb-3 font-semibold">Orders</th>
                 <th className="pb-3 font-semibold">Joined</th>
+                <th className="pb-3 font-semibold text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
+                  <td colSpan={7} className="py-12 text-center text-slate-400">
                     Loading customer directory...
                   </td>
                 </tr>
               ) : filteredCustomers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
+                  <td colSpan={7} className="py-12 text-center text-slate-400">
                     No customers found.
                   </td>
                 </tr>
               ) : (
-                filteredCustomers.map((customer) => (
-                  <tr key={customer.id || customer._id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3.5 font-medium text-slate-900 flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-slate-700">
-                        {customer.name?.charAt(0).toUpperCase() || 'U'}
-                      </div>
-                      <span className="font-semibold">{customer.name}</span>
-                    </td>
-                    <td className="py-3.5 text-slate-600">
-                      <span className="flex items-center gap-1.5">
-                        <Mail className="h-3.5 w-3.5 text-slate-400" />
-                        {customer.email}
-                      </span>
-                    </td>
-                    <td className="py-3.5 text-slate-600">
-                      <span className="flex items-center gap-1.5">
-                        <Phone className="h-3.5 w-3.5 text-slate-400" />
-                        {customer.phone || '-'}
-                      </span>
-                    </td>
-                    <td className="py-3.5">
-                      <Badge
-                        variant={customer.role === 'ADMIN' ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {customer.role}
-                      </Badge>
-                    </td>
-                    <td className="py-3.5 font-bold text-slate-800">
-                      <span className="flex items-center gap-1">
-                        <ShoppingBag className="h-3.5 w-3.5 text-slate-400" />
-                        {customer.orderCount ?? 0}
-                      </span>
-                    </td>
-                    <td className="py-3.5 text-xs text-slate-400">
-                      {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : '-'}
-                    </td>
-                  </tr>
-                ))
+                filteredCustomers.map((customer) => {
+                  const isAdmin = customer.role?.toUpperCase() === 'ADMIN';
+                  return (
+                    <tr key={customer.id || customer._id} className="hover:bg-slate-50/70 transition">
+                      <td className="py-3.5 font-medium text-slate-900 flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-slate-700">
+                          {customer.name?.charAt(0).toUpperCase() || 'U'}
+                        </div>
+                        <span className="font-semibold">{customer.name}</span>
+                      </td>
+                      <td className="py-3.5 text-slate-600">
+                        <span className="flex items-center gap-1.5">
+                          <Mail className="h-3.5 w-3.5 text-slate-400" />
+                          {customer.email}
+                        </span>
+                      </td>
+                      <td className="py-3.5 text-slate-600">
+                        <span className="flex items-center gap-1.5">
+                          <Phone className="h-3.5 w-3.5 text-slate-400" />
+                          {customer.phone || '-'}
+                        </span>
+                      </td>
+                      <td className="py-3.5">
+                        <Badge
+                          variant={isAdmin ? 'default' : 'secondary'}
+                          className={`text-xs ${isAdmin ? 'bg-primary text-primary-foreground font-bold' : ''}`}
+                        >
+                          {isAdmin ? 'ADMIN' : 'CUSTOMER'}
+                        </Badge>
+                      </td>
+                      <td className="py-3.5 font-bold text-slate-800">
+                        <span className="flex items-center gap-1">
+                          <ShoppingBag className="h-3.5 w-3.5 text-slate-400" />
+                          {customer.orderCount ?? 0}
+                        </span>
+                      </td>
+                      <td className="py-3.5 text-xs text-slate-400">
+                        {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : '-'}
+                      </td>
+                      <td className="py-3.5 text-right">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleToggleRole(customer)}
+                          className={`text-xs h-7 px-3 font-semibold rounded-lg ${
+                            isAdmin
+                              ? 'text-amber-800 border-amber-300 hover:bg-amber-50'
+                              : 'text-primary border-primary/30 hover:bg-primary/10'
+                          }`}
+                        >
+                          {isAdmin ? 'Demote to Customer' : 'Make Admin'}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

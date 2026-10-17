@@ -93,9 +93,9 @@ export default function ProfilePage() {
               <p className="text-muted-foreground">Manage your account information and view your order history.</p>
             </div>
             <div className="flex items-center gap-3">
-              {user.role === 'ADMIN' && (
+              {user.role?.toUpperCase() === 'ADMIN' && (
                 <Link href="/admin">
-                  <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary/10 flex items-center gap-2">
+                  <Button className="bg-secondary text-primary hover:bg-secondary/90 font-bold flex items-center gap-2 shadow-sm">
                     <Shield className="h-4 w-4" />
                     Admin Dashboard
                   </Button>

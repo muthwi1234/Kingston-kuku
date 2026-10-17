@@ -38,7 +38,8 @@ export default function LoginPage() {
         setUser(res.user);
       }
       toast.success('Login successful!');
-      if (res.user?.role === 'ADMIN') {
+      const isAdmin = res.user?.role?.toUpperCase() === 'ADMIN';
+      if (isAdmin) {
         router.push('/admin');
       } else {
         router.push('/');

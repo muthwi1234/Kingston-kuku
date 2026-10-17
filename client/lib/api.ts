@@ -87,6 +87,10 @@ export const api = {
       return fetchAPI(`/api/admin/reports/sales?${searchParams.toString()}`);
     },
     getCustomers: () => fetchAPI('/api/admin/customers'),
+    updateUserRole: (id: string, role: string) => fetchAPI(`/api/admin/users/${id}/role`, {
+      method: 'PATCH',
+      body: JSON.stringify({ role }),
+    }),
   },
   settings: {
     getAll: () => fetchAPI('/api/settings'),
@@ -99,6 +103,12 @@ export const api = {
     sendMessage: (data: any) => fetchAPI('/api/contact', {
       method: 'POST',
       body: JSON.stringify(data),
+    }),
+  },
+  upload: {
+    image: (image: string) => fetchAPI('/api/upload', {
+      method: 'POST',
+      body: JSON.stringify({ image }),
     }),
   },
 };

@@ -64,8 +64,12 @@ export default function CartPage() {
                   <Card key={item.productId}>
                     <CardContent className="p-4">
                       <div className="flex gap-4">
-                        <div className="w-20 h-20 bg-muted rounded flex items-center justify-center text-4xl">
-                          🍗
+                        <div className="w-20 h-20 bg-muted rounded overflow-hidden flex items-center justify-center text-4xl shrink-0">
+                          {item.imageUrl ? (
+                            <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span>🍗</span>
+                          )}
                         </div>
                         <div className="flex-1">
                           <h3 className="font-semibold">{item.name}</h3>

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Phone, Mail, MapPin } from 'lucide-react';
+import { Phone, MapPin } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -61,10 +61,6 @@ export default function Footer() {
                 <MapPin className="h-4 w-4 text-secondary" />
                 <span>Nairobi, Kenya</span>
               </li>
-              <li className="flex items-center space-x-2 text-sm">
-                <Mail className="h-4 w-4 text-secondary" />
-                <span>info@kingstonchicken.co.ke</span>
-              </li>
             </ul>
           </div>
 
@@ -72,8 +68,8 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Payment Methods</h3>
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <div className="h-8 w-12 bg-mpesa rounded flex items-center justify-center text-white text-xs font-bold">
+              <div className="flex items-center">
+                <div className="px-3.5 py-1.5 bg-mpesa rounded-md flex items-center justify-center text-white text-sm font-black tracking-wider whitespace-nowrap shadow-sm">
                   M-PESA
                 </div>
               </div>

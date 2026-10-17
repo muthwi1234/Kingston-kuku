@@ -32,9 +32,15 @@ import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
 import { toast } from 'sonner';
 
+const DEFAULT_CATEGORIES = [
+  { _id: 'chicken-parts', id: 'chicken-parts', name: 'Chicken Cuts & Parts', slug: 'chicken-parts' },
+  { _id: 'whole-chicken', id: 'whole-chicken', name: 'Whole Chicken', slug: 'whole-chicken' },
+  { _id: 'specialty', id: 'specialty', name: 'Specialty Cuts & Offal', slug: 'specialty' },
+];
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>(DEFAULT_CATEGORIES);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
@@ -43,6 +49,7 @@ export default function AdminProductsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -56,6 +63,8 @@ export default function AdminProductsPage() {
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
+  const allCategories = categories.length > 0 ? categories : DEFAULT_CATEGORIES;
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -64,7 +73,9 @@ export default function AdminProductsPage() {
         api.categories.getAll(),
       ]);
       setProducts(productsRes.products || []);
-      setCategories(categoriesRes.categories || []);
+      if (categoriesRes.categories && categoriesRes.categories.length > 0) {
+        setCategories(categoriesRes.categories);
+      }
     } catch (err: any) {
       toast.error(err.message || 'Failed to fetch products');
     } finally {
@@ -78,13 +89,14 @@ export default function AdminProductsPage() {
 
   const openCreateModal = () => {
     setEditingProduct(null);
+    const initialCat = (allCategories[0]?._id || allCategories[0]?.id || 'chicken-parts');
     setFormData({
       name: '',
       slug: '',
       description: '',
       pricePerKg: '',
       stockKg: '50',
-      categoryId: categories[0]?._id || categories[0]?.id || '',
+      categoryId: initialCat,
       imageUrl: '',
       isActive: true,
     });
@@ -100,7 +112,7 @@ export default function AdminProductsPage() {
       description: product.description || '',
       pricePerKg: String(product.pricePerKg),
       stockKg: String(product.stockKg || 0),
-      categoryId: product.categoryId?._id || product.categoryId?.id || product.categoryId || '',
+      categoryId: product.categoryId?._id || product.categoryId?.id || product.categoryId || allCategories[0]?._id || '',
       imageUrl: product.imageUrl || '',
       isActive: product.isActive ?? true,
     });
@@ -110,16 +122,31 @@ export default function AdminProductsPage() {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // In a real app, you'd upload to a service like Cloudinary, AWS S3, etc.
-      // For now, we'll use a local preview and store the file as base64
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, imageUrl: reader.result as string });
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Data = reader.result as string;
+      setImagePreview(base64Data);
+      setUploadingImage(true);
+      try {
+        const res = await api.upload.image(base64Data);
+        if (res.url) {
+          setFormData((prev) => ({ ...prev, imageUrl: res.url }));
+          setImagePreview(res.url);
+          toast.success('Image uploaded to Cloudinary');
+        } else {
+          setFormData((prev) => ({ ...prev, imageUrl: base64Data }));
+        }
+      } catch (err: any) {
+        console.warn('Cloudinary upload warning:', err);
+        setFormData((prev) => ({ ...prev, imageUrl: base64Data }));
+        toast.info('Image attached to product');
+      } finally {
+        setUploadingImage(false);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleNameChange = (name: string) => {
@@ -243,7 +270,7 @@ export default function AdminProductsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">All Categories</SelectItem>
-            {categories.map((c) => (
+            {allCategories.map((c) => (
               <SelectItem key={c._id || c.id} value={c.slug || c._id || c.id}>
                 {c.name}
               </SelectItem>
@@ -414,22 +441,24 @@ export default function AdminProductsPage() {
             </div>
 
             <div>
-              <Label>Category *</Label>
-              <Select
+              <Label htmlFor="pCategory">Category *</Label>
+              <select
+                id="pCategory"
                 value={formData.categoryId}
-                onValueChange={(val) => setFormData({ ...formData, categoryId: val })}
+                onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                className="mt-1 flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary shadow-sm"
+                required
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((c) => (
-                    <SelectItem key={c._id || c.id} value={c._id || c.id}>
+                <option value="" disabled>-- Select a Category --</option>
+                {allCategories.map((c) => {
+                  const val = c._id || c.id || c.slug;
+                  return (
+                    <option key={val} value={val}>
                       {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    </option>
+                  );
+                })}
+              </select>
             </div>
 
             <div>
@@ -443,17 +472,35 @@ export default function AdminProductsPage() {
             </div>
 
             <div>
-              <Label htmlFor="pImage">Product Image</Label>
-              <div className="mt-2">
+              <Label htmlFor="pImage">Product Image (Cloudinary)</Label>
+              <div className="mt-2 space-y-2">
                 <Input
                   id="pImage"
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  className="mb-2"
+                  disabled={uploadingImage}
+                  className="bg-white border-slate-300"
                 />
+                {uploadingImage && (
+                  <p className="text-xs text-primary font-semibold animate-pulse flex items-center gap-1.5">
+                    <RefreshCw className="h-3 w-3 animate-spin" /> Uploading image to Cloudinary...
+                  </p>
+                )}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-400 whitespace-nowrap">or Image URL:</span>
+                  <Input
+                    value={formData.imageUrl}
+                    onChange={(e) => {
+                      setFormData({ ...formData, imageUrl: e.target.value });
+                      setImagePreview(e.target.value || null);
+                    }}
+                    placeholder="https://res.cloudinary.com/..."
+                    className="text-xs h-9 bg-white border-slate-300"
+                  />
+                </div>
                 {imagePreview && (
-                  <div className="relative w-full h-40 border rounded-lg overflow-hidden bg-slate-50">
+                  <div className="relative w-full h-40 border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
                     <img
                       src={imagePreview}
                       alt="Product preview"
@@ -463,7 +510,7 @@ export default function AdminProductsPage() {
                       type="button"
                       variant="destructive"
                       size="sm"
-                      className="absolute top-2 right-2"
+                      className="absolute top-2 right-2 h-7 px-2 text-xs"
                       onClick={() => {
                         setFormData({ ...formData, imageUrl: '' });
                         setImagePreview(null);

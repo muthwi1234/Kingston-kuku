@@ -232,17 +232,20 @@ export default function CheckoutPage() {
                             value={formData.paymentMethod}
                             onValueChange={(value) => setFormData({ ...formData, paymentMethod: value })}
                           >
-                            <div className="flex items-center space-x-2 p-3 border rounded-md">
+                            <div className="flex items-center space-x-3 p-3 border rounded-md cursor-pointer hover:bg-slate-50 transition-colors">
                               <RadioGroupItem value="MPESA" id="mpesa" />
-                              <Label htmlFor="mpesa" className="flex items-center gap-2">
-                                <span className="text-mpesa font-bold">M-PESA</span>
+                              <Label htmlFor="mpesa" className="flex items-center gap-2 cursor-pointer">
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-[#43B02A] text-white text-xs font-black tracking-wider whitespace-nowrap shadow-sm">
+                                  M-PESA
+                                </span>
+                                <span className="font-semibold text-slate-800">Pay via M-PESA Till</span>
                               </Label>
                             </div>
-                            <div className="flex items-center space-x-2 p-3 border rounded-md">
+                            <div className="flex items-center space-x-3 p-3 border rounded-md cursor-pointer hover:bg-slate-50 transition-colors">
                               <RadioGroupItem value="CASH" id="cash" />
-                              <Label htmlFor="cash">Cash on Pickup</Label>
+                              <Label htmlFor="cash" className="cursor-pointer font-medium text-slate-800">Cash on Pickup</Label>
                             </div>
-                            <div className="flex items-center space-x-2 p-3 border rounded-md opacity-50">
+                            <div className="flex items-center space-x-3 p-3 border rounded-md opacity-50">
                               <RadioGroupItem value="CARD" id="card" disabled />
                               <Label htmlFor="card">
                                 Card (Visa/Mastercard) - Coming Soon
@@ -252,17 +255,18 @@ export default function CheckoutPage() {
                         </div>
 
                         {formData.paymentMethod === 'MPESA' && (
-                          <div className="bg-mint p-6 rounded-lg space-y-4 border-2 border-mpesa/30">
-                            <p className="font-bold text-lg">Send the total amount to the following M-Pesa till number:</p>
-                            <div className="text-center py-6 bg-white rounded-lg shadow-md">
-                              <p className="text-4xl md:text-5xl font-extrabold text-mpesa tracking-wide">TILL NUMBER 1591045</p>
+                          <div className="bg-emerald-50/60 p-6 rounded-lg space-y-4 border-2 border-emerald-500/30">
+                            <p className="font-bold text-lg text-emerald-950">Send the total amount to the following M-PESA till number:</p>
+                            <div className="text-center py-6 bg-white rounded-lg shadow-sm border border-emerald-200">
+                              <p className="text-xs uppercase font-bold tracking-widest text-emerald-700 mb-1">Buy Goods Till Number</p>
+                              <p className="text-3xl md:text-5xl font-black text-[#43B02A] tracking-wider whitespace-nowrap">1591045</p>
                             </div>
-                            <div className="text-base md:text-lg space-y-2 font-medium">
+                            <div className="text-base md:text-lg space-y-2 font-medium text-slate-800">
                               <p><strong>Amount:</strong> {formatCurrency(total)}</p>
                               <p><strong>Business Number:</strong> +254 143 188357</p>
                             </div>
-                            <p className="text-base mt-4 font-semibold">
-                              After sending the payment, enter the M-Pesa transaction code below to confirm your order.
+                            <p className="text-sm md:text-base mt-4 font-semibold text-slate-700">
+                              After completing the transaction on your phone, enter the M-PESA confirmation code below:
                             </p>
                             <div>
                               <Label htmlFor="mpesaCode" className="text-base font-semibold">M-Pesa Transaction Code *</Label>
@@ -315,8 +319,12 @@ export default function CheckoutPage() {
                     <div className="space-y-3 mb-4">
                       {items.map((item) => (
                         <div key={item.productId} className="flex gap-3">
-                          <div className="w-12 h-12 bg-muted rounded flex items-center justify-center text-2xl">
-                            🍗
+                          <div className="w-12 h-12 bg-muted rounded overflow-hidden flex items-center justify-center text-2xl shrink-0">
+                            {item.imageUrl ? (
+                              <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <span>🍗</span>
+                            )}
                           </div>
                           <div className="flex-1">
                             <p className="text-sm font-medium">{item.name}</p>

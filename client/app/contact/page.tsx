@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Phone, MapPin, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +14,6 @@ import { api } from '@/lib/api';
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
     message: '',
   });
@@ -25,8 +24,8 @@ export default function ContactPage() {
     setLoading(true);
     try {
       await api.contact.sendMessage(formData);
-      toast.success('Message sent successfully!');
-      setFormData({ name: '', email: '', phone: '', message: '' });
+      toast.success('Message sent successfully! We will contact you shortly.');
+      setFormData({ name: '', phone: '', message: '' });
     } catch (error: any) {
       toast.error(error.message || 'Failed to send message');
     } finally {
@@ -49,18 +48,47 @@ export default function ContactPage() {
                 <CardHeader>
                   <CardTitle>Get in Touch</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Phone className="h-5 w-5 text-primary" />
-                    <span>+254 143 188357</span>
+                <CardContent className="space-y-6">
+                  <div className="flex items-start space-x-3">
+                    <Phone className="h-5 w-5 text-primary mt-1" />
+                    <div>
+                      <p className="font-semibold text-slate-800">Phone & Call Orders</p>
+                      <a href="tel:+254143188357" className="text-primary hover:underline font-medium">
+                        +254 143 188357
+                      </a>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <Mail className="h-5 w-5 text-primary" />
-                    <span>info@kingstonchicken.co.ke</span>
+
+                  <div className="flex items-start space-x-3">
+                    <MessageCircle className="h-5 w-5 text-emerald-600 mt-1" />
+                    <div>
+                      <p className="font-semibold text-slate-800">WhatsApp</p>
+                      <a
+                        href="https://wa.me/254143188357"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-700 hover:underline font-medium"
+                      >
+                        Chat with us on WhatsApp
+                      </a>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    <span>Nairobi, Kenya</span>
+
+                  <div className="flex items-start space-x-3">
+                    <MapPin className="h-5 w-5 text-primary mt-1" />
+                    <div>
+                      <p className="font-semibold text-slate-800">Location</p>
+                      <span className="text-slate-600">Nairobi, Kenya</span>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800 mb-1">
+                      M-PESA Till Payment
+                    </p>
+                    <p className="text-sm text-emerald-950 font-bold">
+                      Till Number: <span className="text-lg text-emerald-700">1591045</span>
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -73,31 +101,24 @@ export default function ContactPage() {
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <Label htmlFor="name">Name *</Label>
+                      <Label htmlFor="name">Full Name *</Label>
                       <Input
                         id="name"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="e.g. Mary Wanjiku"
                         required
                       />
                     </div>
                     <div>
-                      <Label htmlFor="email">Email *</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="phone">Phone</Label>
+                      <Label htmlFor="phone">Phone / WhatsApp Number *</Label>
                       <Input
                         id="phone"
+                        type="tel"
                         placeholder="+254 712 345 678"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        required
                       />
                     </div>
                     <div>
@@ -105,12 +126,13 @@ export default function ContactPage() {
                       <textarea
                         id="message"
                         className="flex min-h-[120px] w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary shadow-sm"
+                        placeholder="Tell us what cuts or quantities you need, delivery address, or questions..."
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                         required
                       />
                     </div>
-                    <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary-hover" disabled={loading}>
+                    <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary-hover font-semibold" disabled={loading}>
                       {loading ? 'Sending...' : 'Send Message'}
                     </Button>
                   </form>

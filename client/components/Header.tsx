@@ -94,11 +94,11 @@ export default function Header() {
             <div className="hidden md:flex items-center space-x-2">
               {mounted && user ? (
                 <>
-                  {user.role === 'ADMIN' && (
+                  {user.role?.toUpperCase() === 'ADMIN' && (
                     <Link href="/admin">
-                      <Button variant="outline" size="sm" className="border-secondary text-secondary hover:bg-secondary/10 flex items-center gap-1.5">
+                      <Button size="sm" className="bg-secondary text-primary hover:bg-secondary/90 font-bold flex items-center gap-1.5 shadow-sm">
                         <Shield className="h-3.5 w-3.5" />
-                        Admin
+                        Dashboard
                       </Button>
                     </Link>
                   )}
@@ -167,12 +167,13 @@ export default function Header() {
                           <p className="text-base font-bold text-primary">{user.name}</p>
                           <p className="text-xs text-muted-foreground">{user.email}</p>
                         </div>
-                        {user.role === 'ADMIN' && (
+                        {user.role?.toUpperCase() === 'ADMIN' && (
                           <Link
                             href="/admin"
-                            className="block text-base font-medium text-secondary hover:underline"
+                            className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-secondary text-primary font-bold shadow-sm"
                             onClick={() => setMobileMenuOpen(false)}
                           >
+                            <Shield className="h-4 w-4" />
                             Admin Dashboard →
                           </Link>
                         )}

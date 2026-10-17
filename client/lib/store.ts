@@ -75,7 +75,7 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
-  role: 'CUSTOMER' | 'ADMIN';
+  role: 'CUSTOMER' | 'ADMIN' | string;
 }
 
 interface AuthStore {
@@ -91,13 +91,21 @@ export const useAuthStore = create<AuthStore>()(
     (set) => ({
       user: null,
       isLoading: true,
-      setUser: (user) => set({ user, isLoading: false }),
+      setUser: (user) => {
+        if (user) {
+          const role = user.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'CUSTOMER';
+          set({ user: { ...user, role }, isLoading: false });
+        } else {
+          set({ user: null, isLoading: false });
+        }
+      },
       checkAuth: async () => {
         try {
           const { api } = await import('./api');
           const res = await api.auth.me();
           if (res?.user) {
-            set({ user: res.user, isLoading: false });
+            const role = res.user.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'CUSTOMER';
+            set({ user: { ...res.user, role }, isLoading: false });
           } else {
             set({ user: null, isLoading: false });
           }

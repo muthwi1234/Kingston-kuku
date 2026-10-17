@@ -36,6 +36,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [mounted, setMounted] = useState(false);
 
   const user = useAuthStore((state) => state.user);
+  const isLoading = useAuthStore((state) => state.isLoading);
   const logout = useAuthStore((state) => state.logout);
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
@@ -44,11 +45,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     checkAuth();
   }, [checkAuth]);
 
+  const isAdmin = user?.role?.toUpperCase() === 'ADMIN';
+
   useEffect(() => {
-    if (mounted && (!user || user.role !== 'ADMIN')) {
-      router.push('/auth/login');
+    if (mounted && !isLoading) {
+      if (!user || !isAdmin) {
+        router.push('/auth/login');
+      }
     }
-  }, [mounted, user, router]);
+  }, [mounted, isLoading, user, isAdmin, router]);
 
   const handleLogout = async () => {
     await logout();
@@ -62,6 +67,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
     return pathname.startsWith(route);
   };
+
+  if (!mounted || isLoading || !isAdmin) {
+    return (
+      <div className="min-h-screen bg-[#f5f3ee] flex flex-col items-center justify-center space-y-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-2xl font-bold text-primary animate-pulse">
+          🐓
+        </div>
+        <p className="text-sm font-semibold text-slate-600">Verifying administrator access...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f5f3ee] text-slate-800 flex flex-col">
