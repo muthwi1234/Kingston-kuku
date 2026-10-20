@@ -40,17 +40,6 @@ export default function HomePage() {
     },
   ];
 
-  const defaultProducts = [
-    { id: '1', name: 'Chicken Legs', pricePerKg: 500, slug: 'chicken-legs' },
-    { id: '2', name: 'Boneless', pricePerKg: 600, slug: 'boneless' },
-    { id: '3', name: 'Wings', pricePerKg: 500, slug: 'wings' },
-    { id: '4', name: 'Gizzard', pricePerKg: 500, slug: 'gizzard' },
-    { id: '5', name: 'Drumsticks', pricePerKg: 580, slug: 'drumsticks' },
-    { id: '6', name: 'Chicken Thighs', pricePerKg: 480, slug: 'chicken-thighs' },
-    { id: '7', name: 'Kuku Katakata', pricePerKg: 240, slug: 'kuku-katakata' },
-    { id: '8', name: 'Katakata Without Skin', pricePerKg: 280, slug: 'katakata-without-skin' },
-  ];
-
   useEffect(() => {
     api.products
       .getAll()
@@ -64,7 +53,7 @@ export default function HomePage() {
       });
   }, []);
 
-  const displayProducts = liveProducts.length > 0 ? liveProducts : defaultProducts;
+  const displayProducts = liveProducts;
 
   const handleAddToCart = (product: any) => {
     const pId = product.id || product._id || product.slug;
@@ -141,35 +130,39 @@ export default function HomePage() {
             <p className="text-sm md:text-base text-muted-foreground">Fresh chicken cuts, great prices.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-            {displayProducts.map((product) => (
-              <Card key={product.id || product._id || product.slug} className="overflow-hidden">
-                <div className="aspect-square bg-muted relative">
-                  {product.imageUrl ? (
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
-                      🍗
-                    </div>
-                  )}
-                </div>
-                <CardContent className="p-2 md:p-3 lg:p-4">
-                  <h3 className="font-semibold mb-1 md:mb-2 text-xs sm:text-sm md:text-base">{product.name}</h3>
-                  <p className="text-sm md:text-base lg:text-lg font-bold text-primary mb-2 md:mb-3 lg:mb-4">
-                    {formatCurrency(product.pricePerKg || product.price)} / kg
-                  </p>
-                  <Button
-                    onClick={() => handleAddToCart(product)}
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-xs sm:text-sm md:text-base"
-                  >
-                    Add to Cart
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+            {displayProducts.length === 0 ? (
+              <p className="text-center text-muted-foreground col-span-full">Products coming soon.</p>
+            ) : (
+              displayProducts.map((product) => (
+                <Card key={product.id || product._id || product.slug} className="overflow-hidden">
+                  <div className="aspect-square bg-muted relative">
+                    {product.imageUrl ? (
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+                        🍗
+                      </div>
+                    )}
+                  </div>
+                  <CardContent className="p-2 md:p-3 lg:p-4">
+                    <h3 className="font-semibold mb-1 md:mb-2 text-xs sm:text-sm md:text-base">{product.name}</h3>
+                    <p className="text-sm md:text-base lg:text-lg font-bold text-primary mb-2 md:mb-3 lg:mb-4">
+                      {formatCurrency(product.pricePerKg || product.price)} / kg
+                    </p>
+                    <Button
+                      onClick={() => handleAddToCart(product)}
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-xs sm:text-sm md:text-base"
+                    >
+                      Add to Cart
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
           <div className="text-center mt-6 md:mt-8">
             <Link href="/products">
