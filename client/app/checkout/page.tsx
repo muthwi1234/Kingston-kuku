@@ -107,6 +107,7 @@ export default function CheckoutPage() {
         guestName: formData.fullName,
         guestPhone: formatPhone(formData.phone),
         deliveryType: formData.deliveryType === 'pickup' ? 'PICKUP' : 'DELIVERY',
+        deliveryZoneId: formData.deliveryType === 'delivery' ? selectedZone?._id : undefined,
         address: formData.deliveryType === 'delivery' ? formData.address : '',
         notes: formData.notes,
         paymentMethod: formData.paymentMethod,

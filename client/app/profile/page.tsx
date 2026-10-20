@@ -304,11 +304,21 @@ export default function ProfilePage() {
                         </div>
 
                         <div className="border-t pt-3 space-y-2">
-                          <div className="flex items-center justify-between text-sm">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">Subtotal:</span>
+                            <span>{formatCurrency(order.subtotal || 0)}</span>
+                          </div>
+                          {order.deliveryFee > 0 && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">Delivery Fee:</span>
+                              <span>{formatCurrency(order.deliveryFee)}</span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between text-sm font-bold">
                             <div className="flex items-center gap-2">
                               <CreditCard className="h-4 w-4 text-muted-foreground" />
                               <span className="text-muted-foreground">Payment: </span>
-                              <span className="font-semibold">{order.paymentMethod}</span>
+                              <span>{order.paymentMethod}</span>
                               {order.mpesaCode && <span className="text-xs text-muted-foreground">({order.mpesaCode})</span>}
                               {order.paymentVerified !== undefined && (
                                 <Badge variant={order.paymentVerified ? 'default' : 'destructive'} className="text-xs">
@@ -316,10 +326,7 @@ export default function ProfilePage() {
                                 </Badge>
                               )}
                             </div>
-                            <div>
-                              <span className="text-muted-foreground mr-2">Total:</span>
-                              <span className="text-base font-bold text-primary">{formatCurrency(order.total)}</span>
-                            </div>
+                            <span className="text-base text-primary">{formatCurrency(order.total)}</span>
                           </div>
                           {order.deliveryType && (
                             <div className="text-xs text-muted-foreground">

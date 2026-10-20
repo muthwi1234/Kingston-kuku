@@ -33,6 +33,8 @@ export interface IOrder extends Document {
   guestName?: string;
   guestPhone?: string;
   items: IOrderItem[];
+  subtotal: number;
+  deliveryFee: number;
   total: number;
   status: OrderStatus;
   paymentMethod: PaymentMethod;
@@ -59,6 +61,8 @@ const OrderSchema = new Schema<IOrder>(
     guestName: { type: String },
     guestPhone: { type: String },
     items: { type: [OrderItemSchema], required: true },
+    subtotal: { type: Number, required: true },
+    deliveryFee: { type: Number, default: 0 },
     total: { type: Number, required: true },
     status: { type: String, enum: OrderStatus, default: OrderStatus.PENDING },
     paymentMethod: { type: String, enum: PaymentMethod, required: true },

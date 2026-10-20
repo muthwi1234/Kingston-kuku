@@ -85,7 +85,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-[#f5f3ee] text-slate-800 flex flex-col">
       {/* Top Header */}
       <header className="sticky top-0 z-40 bg-primary text-primary-foreground shadow-sm">
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 lg:px-8">
+        <div className="flex h-16 w-full items-center justify-between px-4 lg:px-8">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
@@ -146,7 +146,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-[1600px] flex-1">
+      <div className="flex w-full flex-1">
         {/* Desktop Sidebar */}
         <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-[#eef0eb] p-5 lg:flex lg:flex-col justify-between">
           <div>

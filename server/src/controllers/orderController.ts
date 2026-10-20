@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import Order, { OrderStatus } from '../models/Order';
 import Product from '../models/Product';
+import DeliveryZone from '../models/DeliveryZone';
 import { AppError } from '../middleware/errorHandler';
 
 export const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = (req as any).userId;
-    const { items, guestName, guestPhone, deliveryType, address, notes, paymentMethod, mpesaCode } = req.body;
+    const { items, guestName, guestPhone, deliveryType, address, notes, paymentMethod, mpesaCode, deliveryZoneId } = req.body;
 
     let subtotal = 0;
     for (const item of items) {
@@ -17,7 +18,14 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
       subtotal += product.pricePerKg * item.quantityKg;
     }
 
-    const deliveryFee = deliveryType === 'pickup' ? 0 : 150;
+    let deliveryFee = 0;
+    if (deliveryType !== 'pickup' && deliveryZoneId) {
+      const zone = await DeliveryZone.findById(deliveryZoneId);
+      if (zone) {
+        deliveryFee = zone.deliveryFee;
+      }
+    }
+
     const total = subtotal + deliveryFee;
 
     const order = await Order.create({
@@ -31,6 +39,8 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
         quantityKg: item.quantityKg,
         subtotal: item.pricePerKg * item.quantityKg,
       })),
+      subtotal,
+      deliveryFee,
       total,
       status: OrderStatus.PENDING,
       paymentMethod,
