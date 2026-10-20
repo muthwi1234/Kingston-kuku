@@ -6,6 +6,7 @@ import Category from '../src/models/Category';
 import Product from '../src/models/Product';
 import Order, { OrderStatus, PaymentMethod, DeliveryType } from '../src/models/Order';
 import Setting from '../src/models/Setting';
+import DeliveryZone from '../src/models/DeliveryZone';
 
 async function getMongoUri() {
   if (process.env.MONGODB_URI) {
@@ -32,6 +33,7 @@ async function seed() {
     await Product.deleteMany({});
     await Order.deleteMany({});
     await Setting.deleteMany({});
+    await DeliveryZone.deleteMany({});
 
     console.log('Cleared existing data');
 
@@ -123,11 +125,39 @@ async function seed() {
     await Setting.create([
       { key: 'delivery_fee', value: '150', description: 'Delivery fee in KSh' },
       { key: 'mpesa_till_number', value: '1591045', description: 'M-Pesa till number' },
-      { key: 'business_phone', value: '+254 143 188357', description: 'Business phone number' },
+      { key: 'business_phone', value: '+254 143 188557', description: 'Business phone number' },
       { key: 'business_address', value: 'Nairobi, Kenya', description: 'Business address' },
       { key: 'business_email', value: 'info@kingstonchicken.co.ke', description: 'Business email' },
+      { key: 'whatsapp_number', value: '+254 143 188557', description: 'WhatsApp number' },
+      { key: 'tiktok_url', value: 'https://www.tiktok.com/@kingston.kuku?_r=1&_t=ZS-9AgTxPc0vhw', description: 'TikTok URL' },
+      { key: 'instagram_url', value: 'https://www.instagram.com/kingstonkuku?exln=MW1vdDBhY2c0cTAxbg==', description: 'Instagram URL' },
     ]);
     console.log('Created settings');
+
+    // Create delivery zones
+    await DeliveryZone.create([
+      {
+        name: 'Nairobi CBD',
+        deliveryFee: 150,
+        areas: ['Nairobi CBD', 'Westlands', 'Parklands', 'Kilimani', 'Lavington'],
+      },
+      {
+        name: 'Nairobi Eastlands',
+        deliveryFee: 200,
+        areas: ['Eastleigh', 'Buruburu', 'Umoja', 'Kayole', 'Embakasi'],
+      },
+      {
+        name: 'Nairobi Westlands',
+        deliveryFee: 250,
+        areas: ['Dagoretti', 'Kawangware', 'Riruta', 'Kangemi', 'Waithaka'],
+      },
+      {
+        name: 'Nairobi South',
+        deliveryFee: 300,
+        areas: ['Langata', 'Karen', 'Mbagathi', 'Rongai', 'Kiserian'],
+      },
+    ]);
+    console.log('Created delivery zones');
 
     await Order.create([
       {

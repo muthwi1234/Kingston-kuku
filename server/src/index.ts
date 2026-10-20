@@ -15,6 +15,7 @@ import adminRoutes from './routes/admin';
 import settingsRoutes from './routes/settings';
 import contactRoutes from './routes/contact';
 import uploadRoutes from './routes/upload';
+import deliveryZoneRoutes from './routes/deliveryZones';
 
 const logger = pino();
 const app = express();
@@ -47,6 +48,7 @@ async function startServer() {
   app.use('/api/settings', settingsRoutes);
   app.use('/api/contact', contactRoutes);
   app.use('/api/upload', uploadRoutes);
+  app.use('/api/delivery-zones', deliveryZoneRoutes);
 
   // Health check
   app.get('/health', (req, res) => {
