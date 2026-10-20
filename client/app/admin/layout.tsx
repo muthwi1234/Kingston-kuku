@@ -15,6 +15,7 @@ import {
   User as UserIcon,
   Menu,
   X,
+  MapPin,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/lib/store';
@@ -24,6 +25,7 @@ const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, route: '/admin' },
   { label: 'Orders', icon: ShoppingCart, route: '/admin/orders' },
   { label: 'Products', icon: Package, route: '/admin/products' },
+  { label: 'Delivery Zones', icon: MapPin, route: '/admin/delivery-zones' },
   { label: 'Customers', icon: Users, route: '/admin/customers' },
   { label: 'Reports', icon: ChartColumnBig, route: '/admin/reports' },
   { label: 'Settings', icon: Settings, route: '/admin/settings' },

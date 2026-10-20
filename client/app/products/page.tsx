@@ -81,7 +81,7 @@ function ProductsContent() {
       <Header />
       
       <main className="flex-1 bg-page py-8">
-        <div className="container mx-auto px-4">
+        <div className="w-full px-4 md:px-8 lg:px-16">
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">All Products</h1>
             <p className="text-muted-foreground">Fresh chicken cuts, great prices.</p>

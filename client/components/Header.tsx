@@ -140,7 +140,7 @@ export default function Header() {
                   {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </Button>
               </SheetTrigger>
-              <SheetContent className="w-[300px] sm:w-[350px]">
+              <SheetContent className="w-[300px] sm:w-[350px] bg-white text-slate-900">
                 <nav className="flex flex-col space-y-4 mt-8">
                   {navLinks.map((link) => (
                     <Link

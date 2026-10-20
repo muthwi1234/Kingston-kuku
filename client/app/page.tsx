@@ -84,7 +84,7 @@ export default function HomePage() {
       
       {/* Hero Section */}
       <section className="bg-primary text-primary-foreground py-12 md:py-16 lg:py-24">
-        <div className="container mx-auto px-4">
+        <div className="w-full px-4 md:px-8 lg:px-16">
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             <div className="space-y-4 md:space-y-6">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold">
@@ -118,7 +118,7 @@ export default function HomePage() {
 
       {/* Features Strip */}
       <section className="py-8 md:py-12 bg-page">
-        <div className="container mx-auto px-4">
+        <div className="w-full px-4 md:px-8 lg:px-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {features.map((feature) => (
               <Card key={feature.title} className="text-center border-none shadow-sm">
@@ -135,12 +135,12 @@ export default function HomePage() {
 
       {/* Our Products */}
       <section className="py-12 md:py-16 bg-page">
-        <div className="container mx-auto px-4">
+        <div className="w-full px-4 md:px-8 lg:px-16">
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">Our Products</h2>
             <p className="text-sm md:text-base text-muted-foreground">Fresh chicken cuts, great prices.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
             {displayProducts.map((product) => (
               <Card key={product.id || product._id || product.slug} className="overflow-hidden">
                 <div className="aspect-square bg-muted relative">
@@ -183,7 +183,7 @@ export default function HomePage() {
 
       {/* Contact Banner */}
       <section className="bg-primary text-primary-foreground py-8 md:py-12">
-        <div className="container mx-auto px-4">
+        <div className="w-full px-4 md:px-8 lg:px-16">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
             <div className="flex items-center space-x-3 md:space-x-4">
               <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full bg-secondary">
@@ -195,7 +195,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="text-center md:text-right space-y-1 md:space-y-2">
-              <p className="font-semibold text-sm md:text-base">+254 143 188357</p>
+              <p className="font-semibold text-sm md:text-base">+254 143 188557</p>
               <p className="text-xs md:text-sm text-muted-foreground">M-Pesa Till Number: 1591045</p>
               <p className="text-xs md:text-sm">We Deliver to your home or office</p>
             </div>

@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { Phone, MapPin } from 'lucide-react';
+import { Phone, MapPin, MessageCircle, Instagram, Share2 } from 'lucide-react';
 
 export default function Footer() {
   return (
     <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           {/* Logo & Tagline */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
@@ -55,11 +55,51 @@ export default function Footer() {
             <ul className="space-y-2">
               <li className="flex items-center space-x-2 text-sm">
                 <Phone className="h-4 w-4 text-secondary" />
-                <span>+254 143 188357</span>
+                <span>+254 143 188557</span>
               </li>
               <li className="flex items-center space-x-2 text-sm">
                 <MapPin className="h-4 w-4 text-secondary" />
                 <span>Nairobi, Kenya</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Social Media */}
+          <div>
+            <h3 className="font-semibold mb-4">Follow Us</h3>
+            <ul className="space-y-2">
+              <li>
+                <a 
+                  href="https://wa.me/254143188557" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2 text-sm hover:text-secondary transition-colors"
+                >
+                  <MessageCircle className="h-4 w-4 text-secondary" />
+                  <span>WhatsApp</span>
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="https://www.tiktok.com/@kingston.kuku?_r=1&_t=ZS-9AgTxPc0vhw" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2 text-sm hover:text-secondary transition-colors"
+                >
+                  <Share2 className="h-4 w-4 text-secondary" />
+                  <span>TikTok</span>
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="https://www.instagram.com/kingstonkuku?exln=MW1vdDBhY2c0cTAxbg==" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2 text-sm hover:text-secondary transition-colors"
+                >
+                  <Instagram className="h-4 w-4 text-secondary" />
+                  <span>Instagram</span>
+                </a>
               </li>
             </ul>
           </div>

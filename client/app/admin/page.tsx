@@ -12,6 +12,7 @@ import {
   ShoppingCart,
   WalletCards,
   RefreshCw,
+  Bell,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
@@ -71,6 +72,7 @@ export default function AdminDashboard() {
       value: String(statsData.pendingOrders ?? 0),
       tone: statsData.pendingOrders > 0 ? 'amber' : 'emerald',
       icon: WalletCards,
+      alert: statsData.pendingOrders > 0,
     },
     {
       label: 'Low Stock Items',
@@ -118,8 +120,13 @@ export default function AdminDashboard() {
 
       {/* Stats Grid */}
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map(({ label, value, tone, icon: Icon }) => (
-          <Card key={label} className="border border-slate-200/80 bg-white p-5 shadow-sm rounded-2xl">
+        {stats.map(({ label, value, tone, icon: Icon, alert }) => (
+          <Card key={label} className="border border-slate-200/80 bg-white p-5 shadow-sm rounded-2xl relative">
+            {alert && (
+              <div className="absolute top-3 right-3">
+                <Bell className="h-5 w-5 text-amber-500 animate-pulse" />
+              </div>
+            )}
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</p>

@@ -111,4 +111,18 @@ export const api = {
       body: JSON.stringify({ image }),
     }),
   },
+  deliveryZones: {
+    getAll: () => fetchAPI('/api/delivery-zones'),
+    create: (data: any) => fetchAPI('/api/delivery-zones', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    update: (id: string, data: any) => fetchAPI(`/api/delivery-zones/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+    delete: (id: string) => fetchAPI(`/api/delivery-zones/${id}`, {
+      method: 'DELETE',
+    }),
+  },
 };

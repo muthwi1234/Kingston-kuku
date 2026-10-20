@@ -19,6 +19,8 @@ export default function CheckoutPage() {
   const { items, clearCart, getSubtotal } = useCartStore();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [deliveryZones, setDeliveryZones] = useState<any[]>([]);
+  const [selectedZone, setSelectedZone] = useState<any>(null);
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -31,7 +33,7 @@ export default function CheckoutPage() {
   });
 
   const subtotal = getSubtotal();
-  const deliveryFee = formData.deliveryType === 'pickup' ? 0 : 150;
+  const deliveryFee = formData.deliveryType === 'pickup' ? 0 : (selectedZone?.deliveryFee || 150);
   const total = subtotal + deliveryFee;
 
   useEffect(() => {
@@ -39,6 +41,17 @@ export default function CheckoutPage() {
       router.replace('/cart');
     }
   }, [items.length, router]);
+
+  useEffect(() => {
+    api.deliveryZones.getAll().then((res) => {
+      setDeliveryZones(res.zones || []);
+      if (res.zones && res.zones.length > 0) {
+        setSelectedZone(res.zones[0]);
+      }
+    }).catch((err) => {
+      console.error('Error fetching delivery zones:', err);
+    });
+  }, []);
 
   if (items.length === 0) {
     return null;
@@ -191,16 +204,43 @@ export default function CheckoutPage() {
                           </RadioGroup>
                         </div>
                         {formData.deliveryType === 'delivery' && (
-                          <div>
-                            <Label htmlFor="address">Delivery Address *</Label>
-                            <Input
-                              id="address"
-                              name="address"
-                              value={formData.address}
-                              onChange={handleInputChange}
-                              required
-                            />
-                          </div>
+                          <>
+                            <div>
+                              <Label htmlFor="zone">Select Your Area *</Label>
+                              <select
+                                id="zone"
+                                value={selectedZone?._id || ''}
+                                onChange={(e) => {
+                                  const zone = deliveryZones.find(z => z._id === e.target.value);
+                                  setSelectedZone(zone);
+                                }}
+                                className="w-full px-3 py-2 border rounded-md bg-white"
+                                required
+                              >
+                                {deliveryZones.map((zone) => (
+                                  <option key={zone._id} value={zone._id}>
+                                    {zone.name} - {formatCurrency(zone.deliveryFee)}
+                                  </option>
+                                ))}
+                              </select>
+                              {selectedZone && (
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Areas covered: {selectedZone.areas.join(', ')}
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              <Label htmlFor="address">Delivery Address *</Label>
+                              <Input
+                                id="address"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleInputChange}
+                                placeholder="Street address, building, etc."
+                                required
+                              />
+                            </div>
+                          </>
                         )}
                         <div>
                           <Label htmlFor="notes">Additional Notes</Label>
