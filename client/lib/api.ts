@@ -77,6 +77,9 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ mpesaCode }),
     }),
+    markPaymentVerified: (id: string) => fetchAPI(`/api/orders/${id}/payment-verified`, {
+      method: 'PATCH',
+    }),
   },
   admin: {
     getStats: () => fetchAPI('/api/admin/stats'),

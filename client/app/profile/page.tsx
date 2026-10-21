@@ -20,6 +20,7 @@ export default function ProfilePage() {
   const logout = useAuthStore((state) => state.logout);
   const [orders, setOrders] = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
+  const [ordersError, setOrdersError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -33,6 +34,8 @@ export default function ProfilePage() {
     }
 
     if (user) {
+      setLoadingOrders(true);
+      setOrdersError(null);
       api.orders
         .getMyOrders()
         .then((res) => {
@@ -40,6 +43,7 @@ export default function ProfilePage() {
         })
         .catch((err) => {
           console.error('Error fetching orders:', err);
+          setOrdersError('Failed to load orders. Please try again.');
         })
         .finally(() => {
           setLoadingOrders(false);
@@ -258,6 +262,15 @@ export default function ProfilePage() {
 
               {loadingOrders ? (
                 <Card className="p-8 text-center text-muted-foreground">Loading your orders...</Card>
+              ) : ordersError ? (
+                <Card className="p-8 text-center">
+                  <AlertCircle className="h-12 w-12 mx-auto mb-3 text-destructive" />
+                  <h3 className="font-semibold text-lg mb-1">Error loading orders</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{ordersError}</p>
+                  <Button onClick={() => window.location.reload()} variant="outline">
+                    Try Again
+                  </Button>
+                </Card>
               ) : orders.length === 0 ? (
                 <Card className="p-8 text-center">
                   <ShoppingBag className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
@@ -330,7 +343,9 @@ export default function ProfilePage() {
                           </div>
                           {order.deliveryType && (
                             <div className="text-xs text-muted-foreground">
-                              {order.deliveryType === 'DELIVERY' ? `🚚 Delivery to: ${order.address}` : '🏪 Pickup at store'}
+                              {order.deliveryType === 'DELIVERY' 
+                                ? `🚚 ${order.deliveryZoneName || 'Delivery'} to: ${order.address}` 
+                                : '🏪 Pickup at store'}
                             </div>
                           )}
                         </div>

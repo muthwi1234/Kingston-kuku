@@ -86,16 +86,23 @@ export default function AdminOrdersPage() {
     setUpdatingId(orderId);
     try {
       await api.orders.verifyPayment(orderId, mpesaCode);
-      toast.success('Payment verified & order confirmed');
-      setOrders((prev) =>
-        prev.map((o) =>
-          o._id === orderId || o.id === orderId
-            ? { ...o, paymentVerified: true, status: 'CONFIRMED' }
-            : o
-        )
-      );
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to verify payment');
+      toast.success('Payment verified');
+      fetchOrders();
+    } catch (error) {
+      toast.error('Failed to verify payment');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleMarkPaid = async (orderId: string) => {
+    setUpdatingId(orderId);
+    try {
+      await api.orders.markPaymentVerified(orderId);
+      toast.success('Payment marked as verified');
+      fetchOrders();
+    } catch (error) {
+      toast.error('Failed to mark payment as verified');
     } finally {
       setUpdatingId(null);
     }
@@ -265,15 +272,15 @@ export default function AdminOrdersPage() {
 
                       {/* Actions */}
                       <td className="py-4 align-top text-right space-y-2">
-                        {!order.paymentVerified && order.paymentMethod === 'MPESA' && (
+                        {!order.paymentVerified && (
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleVerifyPayment(oId, order.mpesaCode)}
+                            onClick={() => order.paymentMethod === 'MPESA' ? handleVerifyPayment(oId, order.mpesaCode) : handleMarkPaid(oId)}
                             disabled={isUpdating}
                             className="h-8 text-xs border-emerald-300 text-emerald-700 hover:bg-emerald-50 mr-2"
                           >
-                            Verify M-Pesa
+                            {order.paymentMethod === 'MPESA' ? 'Verify M-Pesa' : 'Mark Paid'}
                           </Button>
                         )}
 

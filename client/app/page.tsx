@@ -134,33 +134,38 @@ export default function HomePage() {
               <p className="text-center text-muted-foreground col-span-full">Products coming soon.</p>
             ) : (
               displayProducts.map((product) => (
-                <Card key={product.id || product._id || product.slug} className="overflow-hidden">
-                  <div className="aspect-square bg-muted relative">
-                    {product.imageUrl ? (
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
-                        🍗
-                      </div>
-                    )}
-                  </div>
-                  <CardContent className="p-2 md:p-3 lg:p-4">
-                    <h3 className="font-semibold mb-1 md:mb-2 text-xs sm:text-sm md:text-base">{product.name}</h3>
-                    <p className="text-sm md:text-base lg:text-lg font-bold text-primary mb-2 md:mb-3 lg:mb-4">
-                      {formatCurrency(product.pricePerKg || product.price)} / kg
-                    </p>
-                    <Button
-                      onClick={() => handleAddToCart(product)}
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-xs sm:text-sm md:text-base"
-                    >
-                      Add to Cart
-                    </Button>
-                  </CardContent>
-                </Card>
+                <Link key={product.id || product._id || product.slug} href={`/products/${product.slug}`}>
+                  <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                    <div className="aspect-square bg-muted relative">
+                      {product.imageUrl ? (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+                          🍗
+                        </div>
+                      )}
+                    </div>
+                    <CardContent className="p-2 md:p-3 lg:p-4">
+                      <h3 className="font-semibold mb-1 md:mb-2 text-xs sm:text-sm md:text-base">{product.name}</h3>
+                      <p className="text-sm md:text-base lg:text-lg font-bold text-primary mb-2 md:mb-3 lg:mb-4">
+                        {formatCurrency(product.pricePerKg || product.price)} / kg
+                      </p>
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAddToCart(product);
+                        }}
+                        className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-xs sm:text-sm md:text-base"
+                      >
+                        Add to Cart
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))
             )}
           </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { Search, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -128,33 +129,38 @@ function ProductsContent() {
               ))
             ) : (
               products.map((product) => (
-                <Card key={product.id || product._id} className="overflow-hidden">
-                  <div className="aspect-square bg-muted relative">
-                    {product.imageUrl ? (
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-5xl sm:text-6xl">
-                        🍗
-                      </div>
-                    )}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold mb-2 text-sm sm:text-base">{product.name}</h3>
-                    <p className="text-base sm:text-lg font-bold text-primary mb-4">
-                      {formatCurrency(product.pricePerKg)} / kg
-                    </p>
-                    <Button
-                      onClick={() => handleAddToCart(product)}
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-sm sm:text-base"
-                    >
-                      Add to Cart
-                    </Button>
-                  </CardContent>
-                </Card>
+                <Link key={product.id || product._id} href={`/products/${product.slug}`}>
+                  <Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                    <div className="aspect-square bg-muted relative">
+                      {product.imageUrl ? (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-5xl sm:text-6xl">
+                          🍗
+                        </div>
+                      )}
+                    </div>
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold mb-2 text-sm sm:text-base">{product.name}</h3>
+                      <p className="text-base sm:text-lg font-bold text-primary mb-4">
+                        {formatCurrency(product.pricePerKg)} / kg
+                      </p>
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAddToCart(product);
+                        }}
+                        className="w-full bg-primary text-primary-foreground hover:bg-primary-hover text-sm sm:text-base"
+                      >
+                        Add to Cart
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))
             )}
           </div>
