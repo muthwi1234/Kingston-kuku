@@ -58,8 +58,8 @@ export default function AdminProductsPage() {
     pricePerKg: '',
     stockKg: '',
     categoryId: '',
-    imageUrl: '',
     isActive: true,
+    imageUrl: '',
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -157,7 +157,7 @@ export default function AdminProductsPage() {
     setFormData((prev) => ({
       ...prev,
       name,
-      slug: editingProduct ? prev.slug : slug,
+      slug,
     }));
   };
 
@@ -172,7 +172,6 @@ export default function AdminProductsPage() {
     try {
       const payload = {
         name: formData.name,
-        slug: formData.slug,
         description: formData.description,
         pricePerKg: Number(formData.pricePerKg),
         stockKg: Number(formData.stockKg),
@@ -404,13 +403,13 @@ export default function AdminProductsPage() {
             </div>
 
             <div>
-              <Label htmlFor="pSlug">Slug *</Label>
+              <Label htmlFor="pSlug">Slug (auto-generated)</Label>
               <Input
                 id="pSlug"
                 value={formData.slug}
-                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                disabled
                 placeholder="chicken-drumsticks"
-                required
+                className="bg-slate-50"
               />
             </div>
 

@@ -3,6 +3,35 @@ import Product from '../models/Product';
 import Category from '../models/Category';
 import { AppError } from '../middleware/errorHandler';
 
+const generateSlug = (name: string): string => {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+};
+
+const ensureUniqueSlug = async (slug: string, excludeId?: string): Promise<string> => {
+  let finalSlug = slug;
+  let counter = 1;
+
+  while (true) {
+    const filter: any = { slug: finalSlug };
+    if (excludeId) {
+      filter._id = { $ne: excludeId };
+    }
+
+    const existing = await Product.findOne(filter);
+    if (!existing) {
+      return finalSlug;
+    }
+
+    finalSlug = `${slug}-${counter}`;
+    counter++;
+  }
+};
+
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { category, search } = req.query;
@@ -51,11 +80,14 @@ export const getProductById = async (req: Request, res: Response, next: NextFunc
 
 export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, slug, description, pricePerKg, imageUrl, categoryId, stockKg } = req.body;
+    const { name, description, pricePerKg, imageUrl, categoryId, stockKg } = req.body;
+
+    const slug = generateSlug(name);
+    const uniqueSlug = await ensureUniqueSlug(slug);
 
     const product = await Product.create({
       name,
-      slug,
+      slug: uniqueSlug,
       description,
       pricePerKg,
       imageUrl,
@@ -74,13 +106,16 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
 export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const { name, slug, description, pricePerKg, imageUrl, categoryId, stockKg, isActive } = req.body;
+    const { name, description, pricePerKg, imageUrl, categoryId, stockKg, isActive } = req.body;
+
+    const slug = generateSlug(name);
+    const uniqueSlug = await ensureUniqueSlug(slug, Array.isArray(id) ? id[0] : id);
 
     const product = await Product.findByIdAndUpdate(
       id,
       {
         name,
-        slug,
+        slug: uniqueSlug,
         description,
         pricePerKg,
         imageUrl,

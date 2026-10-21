@@ -31,7 +31,8 @@ export default function ProductDetailPage() {
     setLoading(true);
     try {
       const res = await api.products.getAll();
-      const foundProduct = res.products.find((p: any) => p.slug === params.slug);
+      const normalizedSlug = decodeURIComponent(String(params.slug)).trim().toLowerCase();
+      const foundProduct = res.products.find((p: any) => (p.slug || '').trim().toLowerCase() === normalizedSlug);
       if (foundProduct) {
         setProduct(foundProduct);
       } else {
