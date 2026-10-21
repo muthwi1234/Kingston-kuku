@@ -19,19 +19,25 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
     }
 
     let deliveryFee = 0;
-    if (deliveryType !== 'pickup' && deliveryZoneId) {
+    let deliveryZoneName = undefined;
+    if (deliveryType !== 'PICKUP' && deliveryZoneId) {
       const zone = await DeliveryZone.findById(deliveryZoneId);
-      if (zone) {
-        deliveryFee = zone.deliveryFee;
+      if (!zone) {
+        throw new AppError('Delivery zone not found', 404);
       }
+      if (!zone.isActive) {
+        throw new AppError('Delivery zone is not active', 400);
+      }
+      deliveryFee = zone.deliveryFee;
+      deliveryZoneName = zone.name;
     }
 
     const total = subtotal + deliveryFee;
 
     const order = await Order.create({
       userId: userId || undefined,
-      guestName: userId ? undefined : guestName,
-      guestPhone: userId ? undefined : guestPhone,
+      guestName,
+      guestPhone,
       items: items.map((item: any) => ({
         productId: item.productId,
         productName: item.productName,
@@ -44,10 +50,12 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
       total,
       status: OrderStatus.PENDING,
       paymentMethod,
-      paymentVerified: paymentMethod !== 'MPESA',
+      paymentVerified: false,
       mpesaCode: paymentMethod === 'MPESA' ? mpesaCode : undefined,
       deliveryType,
-      address: deliveryType === 'delivery' ? address : undefined,
+      deliveryZoneId: deliveryType !== 'PICKUP' ? deliveryZoneId : undefined,
+      deliveryZoneName,
+      address: deliveryType === 'DELIVERY' ? address : undefined,
       notes,
     });
 
@@ -152,6 +160,26 @@ export const verifyPayment = async (req: Request, res: Response, next: NextFunct
         mpesaCode,
         status: OrderStatus.CONFIRMED,
       },
+      { new: true }
+    );
+
+    if (!order) {
+      throw new AppError('Order not found', 404);
+    }
+
+    res.json({ order });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const markPaymentVerified = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { paymentVerified: true },
       { new: true }
     );
 

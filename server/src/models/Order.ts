@@ -41,6 +41,8 @@ export interface IOrder extends Document {
   paymentVerified: boolean;
   mpesaCode?: string;
   deliveryType: DeliveryType;
+  deliveryZoneId?: mongoose.Types.ObjectId;
+  deliveryZoneName?: string;
   address?: string;
   notes?: string;
   createdAt: Date;
@@ -69,6 +71,8 @@ const OrderSchema = new Schema<IOrder>(
     paymentVerified: { type: Boolean, default: false },
     mpesaCode: { type: String },
     deliveryType: { type: String, enum: DeliveryType, required: true },
+    deliveryZoneId: { type: Schema.Types.ObjectId, ref: 'DeliveryZone' },
+    deliveryZoneName: { type: String },
     address: { type: String },
     notes: { type: String },
   },

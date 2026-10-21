@@ -50,6 +50,45 @@ export const authenticate = async (
   }
 };
 
+export const optionalAuthenticate = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return next();
+    }
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || 'your-secret-key'
+    ) as { id?: string; userId?: string; email?: string; role?: string };
+
+    const userId = decoded.id || decoded.userId;
+    const user = await User.findById(userId).select('email role');
+
+    if (!user) {
+      return next();
+    }
+
+    const normalizedRole = user.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'CUSTOMER';
+
+    req.user = {
+      id: user._id.toString(),
+      email: user.email,
+      role: normalizedRole,
+    };
+    (req as any).userId = user._id.toString();
+    (req as any).userRole = normalizedRole;
+    next();
+  } catch (error) {
+    next();
+  }
+};
+
 export const requireAdmin = (
   req: AuthRequest,
   res: Response,

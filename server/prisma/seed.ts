@@ -128,7 +128,7 @@ async function seed() {
       { key: 'business_phone', value: '+254 143 188557', description: 'Business phone number' },
       { key: 'business_address', value: 'Nairobi, Kenya', description: 'Business address' },
       { key: 'business_email', value: 'info@kingstonchicken.co.ke', description: 'Business email' },
-      { key: 'whatsapp_number', value: '+254 143 188557', description: 'WhatsApp number' },
+      { key: 'whatsapp_number', value: '+254 143 188357', description: 'WhatsApp number' },
       { key: 'tiktok_url', value: 'https://www.tiktok.com/@kingston.kuku?_r=1&_t=ZS-9AgTxPc0vhw', description: 'TikTok URL' },
       { key: 'instagram_url', value: 'https://www.instagram.com/kingstonkuku?exln=MW1vdDBhY2c0cTAxbg==', description: 'Instagram URL' },
     ]);
