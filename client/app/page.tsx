@@ -91,14 +91,23 @@ export default function HomePage() {
                   Shop Now →
                 </Button>
               </Link>
-              <div className="inline-block mt-4 px-4 py-2 bg-primary-foreground/10 rounded-full border border-secondary">
-                <span className="text-xs md:text-sm font-semibold text-secondary">FRESH LOCAL CHICKEN</span>
+              <div className="flex flex-wrap gap-2 mt-4">
+                <div className="inline-block px-4 py-2 bg-primary-foreground/10 rounded-full border border-secondary">
+                  <span className="text-xs md:text-sm font-semibold text-secondary">FRESH LOCAL CHICKEN</span>
+                </div>
+                <div className="inline-block px-4 py-2 bg-green-500/20 rounded-full border border-green-500">
+                  <span className="text-xs md:text-sm font-semibold text-green-400">✓ HALAL CERTIFIED</span>
+                </div>
               </div>
             </div>
             <div className="relative h-48 md:h-64 lg:h-96">
               <div className="absolute inset-0 bg-gradient-to-br from-primary-foreground/20 to-transparent rounded-lg" />
-              <div className="relative h-full w-full bg-primary-foreground/10 rounded-lg flex items-center justify-center">
-                <span className="text-6xl md:text-8xl">🍗</span>
+              <div className="relative h-full w-full bg-primary-foreground/10 rounded-lg flex items-center justify-center overflow-hidden">
+                <img
+                  src="/WhatsApp Image 2026-10-21 at 12.03.45.jpeg"
+                  alt="Fresh Chicken Drumsticks"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
@@ -193,7 +202,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="text-center md:text-right space-y-1 md:space-y-2">
-              <p className="font-semibold text-sm md:text-base">+254 143 188557</p>
+              <p className="font-semibold text-sm md:text-base">+254 143 188357</p>
               <p className="text-xs md:text-sm text-muted-foreground">M-Pesa Till Number: 1591045</p>
               <p className="text-xs md:text-sm">We Deliver to your home or office</p>
             </div>

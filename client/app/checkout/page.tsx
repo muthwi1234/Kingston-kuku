@@ -33,7 +33,7 @@ export default function CheckoutPage() {
   });
 
   const subtotal = getSubtotal();
-  const deliveryFee = formData.deliveryType === 'pickup' ? 0 : (selectedZone?.deliveryFee || 150);
+  const deliveryFee = formData.deliveryType === 'pickup' ? 0 : (selectedZone?.deliveryFee || 0);
   const total = subtotal + deliveryFee;
 
   useEffect(() => {

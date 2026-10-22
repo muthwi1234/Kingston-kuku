@@ -73,11 +73,11 @@ export default function Header() {
           {/* Right Side */}
           <div className="flex items-center space-x-2 sm:space-x-4">
             <a
-              href="tel:+254143188557"
+              href="tel:+254143188357"
               className="hidden md:flex items-center space-x-2 text-sm hover:text-secondary transition-colors"
             >
               <Phone className="h-4 w-4" />
-              <span className="hidden lg:inline">+254 143 188557</span>
+              <span className="hidden lg:inline">+254 143 188357</span>
             </a>
 
             <Link href="/cart" className="relative">
@@ -153,11 +153,11 @@ export default function Header() {
                     </Link>
                   ))}
                   <a
-                    href="tel:+254143188557"
+                    href="tel:+254143188357"
                     className="flex items-center space-x-2 text-lg font-medium hover:text-secondary transition-colors"
                   >
                     <Phone className="h-5 w-5" />
-                    <span>+254 143 188557</span>
+                    <span>+254 143 188357</span>
                   </a>
                   <div className="border-t border-primary-foreground/20 pt-4 space-y-3">
                     {mounted && user ? (

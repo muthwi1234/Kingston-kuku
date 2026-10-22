@@ -125,7 +125,7 @@ async function seed() {
     await Setting.create([
       { key: 'delivery_fee', value: '150', description: 'Delivery fee in KSh' },
       { key: 'mpesa_till_number', value: '1591045', description: 'M-Pesa till number' },
-      { key: 'business_phone', value: '+254 143 188557', description: 'Business phone number' },
+      { key: 'business_phone', value: '+254 143 188357', description: 'Business phone number' },
       { key: 'business_address', value: 'Nairobi, Kenya', description: 'Business address' },
       { key: 'business_email', value: 'info@kingstonchicken.co.ke', description: 'Business email' },
       { key: 'whatsapp_number', value: '+254 143 188357', description: 'WhatsApp number' },

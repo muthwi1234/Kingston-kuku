@@ -23,7 +23,7 @@ export default function AdminSettingsPage() {
 
   const [settings, setSettings] = useState({
     store_name: 'Kingston Chicken',
-    contact_phone: '+254 143 188557',
+    contact_phone: '+254 143 188357',
     mpesa_till_number: '1591045',
     delivery_fee: '150',
     minimum_order: '500',
