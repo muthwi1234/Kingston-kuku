@@ -15,8 +15,7 @@ export default function CartPage() {
   const { items, updateQuantity, removeItem, clearCart, getSubtotal } = useCartStore();
   
   const subtotal = getSubtotal();
-  const deliveryFee = 150;
-  const total = subtotal + deliveryFee;
+  const total = subtotal;
 
   const handleCheckout = () => {
     if (items.length === 0) {
@@ -128,10 +127,7 @@ export default function CartPage() {
                         <span className="text-muted-foreground">Subtotal</span>
                         <span className="font-medium">{formatCurrency(subtotal)}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Delivery</span>
-                        <span className="font-medium">{formatCurrency(deliveryFee)}</span>
-                      </div>
+                      <p className="text-xs text-muted-foreground">Delivery fee calculated at checkout</p>
                       <div className="border-t pt-3 flex justify-between">
                         <span className="font-bold">Total</span>
                         <span className="font-bold text-lg">{formatCurrency(total)}</span>
